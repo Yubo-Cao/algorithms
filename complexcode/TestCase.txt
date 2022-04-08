@@ -1,0 +1,23 @@
+2
+9 2 1
+Print “I have a number”
+If num > 2
+{
+Print “It’s more than 2”
+}
+Else
+{
+Print “It’s 2 or less”
+}
+11 2 2
+If num > 3
+{
+If num > 4
+{
+Print “It’s really big”
+}
+Else
+{
+Print “It’s pretty big”
+}
+}
