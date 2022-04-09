@@ -8,20 +8,20 @@ public class LittleOrphanASCII {
 
     /*
     Match against work order
-    [id] [name] [date]
+    [name] [name] [date]
     5,Door Jammed,02-05-2020
     */
     private static Pattern workOrder = Pattern.compile("(?<id>\\d+),(.*)");
 
     /*
     Match against work task
-    [id] [workId] [partId] [name]
+    [name] [workId] [partId] [name]
      */
     private static Pattern workTask = Pattern.compile("(?<id>\\d+),(?<workId>\\d+),(?<partId>\\d+),(.*)");
 
     /*
     Match against part
-    [id] [name] [serialNumber]
+    [name] [name] [serialNumber]
      */
     private static Pattern part = Pattern.compile("(?<id>\\d+),(.*),(.*)");
 

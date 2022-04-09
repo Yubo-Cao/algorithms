@@ -1,6 +1,8 @@
 package mylib;
 
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Matrix {
@@ -169,8 +171,34 @@ public class Matrix {
         return Math.sqrt(sum);
     }
 
+    public double[][] getMatrix() {
+        return matrix; // Unsafe, but as we are creator, we know what we are doing
+    }
+
+
     @Override
     public String toString() {
-        return "[" + Arrays.stream(matrix).map(row -> Arrays.toString(row)).collect(Collectors.joining("\n")) + "]";
+        return "[" + Arrays.stream(matrix).map(Arrays::toString).collect(Collectors.joining("\n")) + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Matrix matrix1 = (Matrix) o;
+        return Arrays.deepEquals(matrix, matrix1.matrix);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(matrix);
+    }
+
+    public String toString(String format, String sepBetweenElement, String sepBetweenRow, String start, String end) {
+        return start + Arrays.stream(matrix)
+                .map(row -> Arrays.stream(row)
+                        .mapToObj(it -> start + String.format(format, it) + end)
+                        .collect(Collectors.joining(sepBetweenElement)))
+                .collect(Collectors.joining(sepBetweenRow)) + end;
     }
 }

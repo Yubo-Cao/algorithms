@@ -1,2 +1,5 @@
 # 项目排除路径
 /out/
+# /.idea/
+# I use idea from jetbrains, so you will see that
+# Maybe we will make a unification on IDE?
