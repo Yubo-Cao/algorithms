@@ -1,7 +1,6 @@
 package AroundAndAround;
-import java.util.*;
-import java.io.*;
 import java.text.DecimalFormat;
+import java.util.Scanner;
 
 public class AroundAndAround {
     public static void main(String[] args) {
