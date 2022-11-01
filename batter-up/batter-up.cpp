@@ -115,7 +115,10 @@ void solve(int testcase) {
       if (str != "BB")
         count++;
   }
-  cout << name << "=" << (sum/count);
+  if (count != 0)
+    cout << name << "=" << (sum/count);
+  else
+    cout << "0.000";
 }
 
 int main() {
