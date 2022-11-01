@@ -4,8 +4,11 @@
 #include<algorithm>
 #include<set>
 #include<cstring>
-#include<numeric>
 #include<string>
+#include<numeric>
+#include<sstream>
+#include<iterator>
+#include<climits>
 
 using namespace std;
 typedef long long int lli;
@@ -38,7 +41,7 @@ typedef long long int lli;
 #define mp make_pair
 #define F first
 #define S second
-#define clr(x) memset(x, 0, sizeof(x))
+#define cl(x) memset(x, 0, sizeof(x))
 #define sortall(x) sort(all(x))
 #define tr(it, a) for(auto it = a.begin(); it != a.end(); it++)
 #define PI 3.1415926535897932384626
@@ -88,20 +91,40 @@ lli power(lli a,lli b) {
   return ans;
 }
 
+void split(const string &s, char delim, vector<string> &elems) {
+    stringstream ss;
+    ss.str(s);
+    string item;
+    while (getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+}
+
+vector<string> split(const string &s, char delim) {
+    vector<string> elems;
+    split(s, delim, elems);
+    return elems;
+}
+
 void solve(int testcase) {
   string line;
   getline(cin, line);
-  cout << line << endl;
+  vector<string> words = split(line, ' ');
+  int max = INT_MIN;
+  for (string str : words) {
+      if (stoi(str) > max)
+        max = stoi(str);
+  }
+  cout << max << endl;
 }
 
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
-
   lli testcases;
   cin>>testcases;
   cin.ignore();
-  for(int testcase=0; testcase<testcases; testcase++) { 
+  for(int testcase=0; testcase<testcases; testcase++) {
     solve(testcase);
   }
 }

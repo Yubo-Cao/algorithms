@@ -118,7 +118,7 @@ void solve(int testcase) {
   if (count != 0)
     cout << name << "=" << (sum/count);
   else
-    cout << "0.000";
+    cout << name << "=" << "0.000";
 }
 
 int main() {
