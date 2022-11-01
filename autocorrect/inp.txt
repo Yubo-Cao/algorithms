@@ -1,4 +1,13 @@
-1
+2
+3 5
+computer
+mouse
+program
+konpuder
+house
+compoooo
+anagram
+oeifeln
 3 5
 computer
 mouse

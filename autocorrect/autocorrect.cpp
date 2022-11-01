@@ -5,6 +5,7 @@
 #include<set>
 #include<cstring>
 #include<numeric>
+#include<climits>
 
 using namespace std;
 typedef long long int lli;
@@ -88,15 +89,42 @@ lli power(lli a,lli b) {
 }
 
 void solve(int testcase) {
-  int d, w, i;
+  int d, w;
+  string str;
+  vector<string> list = {};
+  vector<string> words = {};
   cin >> d >> w;
-  fo(i, d) {
+  for (int i = 0; i < d; i++) {
+    cin >> str;
+    list.insert(list.end(), str);
+  }
+  for(int i = 0; i < w; i++) {
+    cin >> str;
+    words.insert(words.end(), str);
+  }
+  for (long long unsigned int i = 0; i < words.size(); i++) {
+    int count = 0;
+    int min = INT_MAX;
+    string output;
+      for (long long unsigned int j = 0; j < list.size(); j++) {
+          if (words[i].length() != list[j].length())
+            continue;
+          for (long long unsigned int k = 0; k < words[i].length(); k++) {
+              if (words[i][k] != list[j][k])
+                count++;
+          }
+          if (count < min) {
+              min = count;
+              output = list[j];
+          }
+      }
+      cout << output << endl;
+  }
 }
 
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
-
   lli testcases;
   cin>>testcases;
   for(int testcase=0; testcase<testcases; testcase++) {
