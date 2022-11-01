@@ -119,6 +119,7 @@ void solve(int testcase) {
           }
       }
       cout << output << endl;
+      count = 0;
   }
 }
 

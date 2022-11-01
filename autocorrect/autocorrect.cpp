@@ -103,10 +103,10 @@ void solve(int testcase) {
     words.insert(words.end(), str);
   }
   for (long long unsigned int i = 0; i < words.size(); i++) {
-    int count = 0;
     int min = INT_MAX;
     string output;
       for (long long unsigned int j = 0; j < list.size(); j++) {
+          int count = 0;
           if (words[i].length() != list[j].length())
             continue;
           for (long long unsigned int k = 0; k < words[i].length(); k++) {
