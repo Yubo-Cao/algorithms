@@ -116,17 +116,19 @@ void solve(int testcase) {
   vector<string> words = split(line, ' ');
   vector<string> icao = {"Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "Xray", "Yankee", "Zulu"};
   string ans = "";
-  for (string str : words ) {
-    for (long long unsigned int i = 0; i < str.length(); i++) {
+  for (long long unsigned int word = 0; word < words.size(); word++) {
+    for (long long unsigned int i = 0; i < words[word].length(); i++) {
         for (string match : icao) {
-          if (tolower(str[i]) == tolower(match[0])) {
+          if (tolower(words[word][i]) == tolower(match[0])) {
               ans += match;
-              if (i == str.length()-1)
+              if (i == words[word].length()-1)
                 break;
               ans += "-";
           }
         }
     }
+    if (word == words.size()-1)
+      break;
     ans += " ";
   }
   cout << ans << endl;
