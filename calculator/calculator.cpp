@@ -8,9 +8,8 @@
 #include<numeric>
 #include<sstream>
 #include<iterator>
-#include<cmath>
 #include<climits>
-
+#include<cmath>
 using namespace std;
 typedef long long int lli;
 
@@ -107,26 +106,25 @@ vector<string> split(const string &s, char delim) {
     return elems;
 }
 
-lli factorial(lli n) {
-    if (n > 1)
-      return n*factorial(n-1);
-    else
-      return 1;
+double round_up(double value, int decimal_places) {
+    const double multiplier = std::pow(10.0, decimal_places);
+    return std::ceil(value * multiplier) / multiplier;
 }
 
 void solve(int testcase) {
-  cin.precision(1);
+  cout << fixed;
+  cout.precision(1);
   float num1, num2;
   string operation;
   cin >> num1 >> operation >> num2;
   if (operation == "+")
-    cout << (num1+num2) << " " << (num1+num2) << endl;
+    cout << (num1+num2) << " " << (num2+num1) << endl;
   else if (operation == "-")
     cout << (num1-num2) << " " << (num2-num1) << endl;
   else if (operation == "*")
-    cout << (num1*num2) << " " << (num1*num2) << endl;
+    cout << (num1*num2) << " " << (num2*num1) << endl;
   else if (operation == "/")
-    cout << (num1/num2) << " " << (num2/num1) << endl;
+    cout << (num1/num2) << " " << (round_up(num2/num1, 1)) << endl;
 }
 
 int main() {
