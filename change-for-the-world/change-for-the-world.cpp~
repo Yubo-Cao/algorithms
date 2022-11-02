@@ -111,7 +111,7 @@ void solve(int testcase) {
   int q = 0;
   int d = 0;
   int n = 0;
-  int p = 0;
+  double p = 0;
   cin >> str;
   cout << str << endl;
   str = str.substr(1, str.length());

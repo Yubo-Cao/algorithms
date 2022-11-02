@@ -111,22 +111,18 @@ void solve(int testcase) {
   int q = 0;
   int d = 0;
   int n = 0;
-  int p = 0;
+  double p = 0;
   cin >> str;
   cout << str << endl;
   str = str.substr(1, str.length());
   double amount = stod(str);
   q = amount/0.25;
   amount -= q*0.25;
-  cout << amount << endl;
   d = amount / 0.10;
   amount -= d*0.10;
-  cout << amount << endl;
   n = amount / 0.05;
   amount -= n*0.05;
-  cout << amount << endl;
   p = amount / 0.01;
-  cout << amount << endl;
 
   cout << "Quarters=" << q << endl;
   cout << "Dimes=" << d << endl;
