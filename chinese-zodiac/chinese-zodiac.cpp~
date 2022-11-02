@@ -8,8 +8,8 @@
 #include<numeric>
 #include<sstream>
 #include<iterator>
-#include<climits>
 #include<cmath>
+#include<climits>
 
 using namespace std;
 typedef long long int lli;
@@ -92,11 +92,6 @@ lli power(lli a,lli b) {
   return ans;
 }
 
-double round_up(double value, int decimal_places) {
-    const double multiplier = std::pow(10.0, decimal_places);
-    return std::ceil(value * multiplier) / multiplier;
-}
-
 void split(const string &s, char delim, vector<string> &elems) {
     stringstream ss;
     ss.str(s);
@@ -113,29 +108,17 @@ vector<string> split(const string &s, char delim) {
 }
 
 void solve(int testcase) {
-  cin.precision(100);
-  string str;
-  int q = 0;
-  int d = 0;
-  int n = 0;
-  int p = 0;
-  cin >> str;
-  cout << str << endl;
-  str = str.substr(1, str.length());
-  double amount = stod(str);
-  q = (int)(amount / 0.25);
-  amount -= q*0.25;
-  d = (int)(amount / 0.10);
-  amount -= d*0.10; 
-  n = (int)(amount / 0.05);
-  amount -= n*0.05;
-  p = (int)(amount / 0.01);
-  amount -= p*0.01;
-  cout << amount << endl;
-  cout << "Quarters=" << q << endl;
-  cout << "Dimes=" << d << endl;
-  cout << "Nickels=" << n << endl;
-  cout << "Pennies=" << p << endl;
+  int year;
+  cin >> year;
+  cout << year << " ";
+  vector<string> elements = {"Wood", "Fire", "Earth", "Metal", "Water"};
+  vector<string> animals = {"Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake", "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"};
+  if (year % 2 == 0)
+    cout << "Yang" << " ";
+  else
+    cout << "Yin" << " ";
+  cout << (elements[floor(((year-4)%10)/2)]) << " ";
+  cout << animals[((year-4)%12)];
 }
 
 int main() {

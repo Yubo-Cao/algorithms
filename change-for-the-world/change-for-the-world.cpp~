@@ -9,6 +9,7 @@
 #include<sstream>
 #include<iterator>
 #include<climits>
+#include<cmath>
 
 using namespace std;
 typedef long long int lli;
@@ -91,6 +92,11 @@ lli power(lli a,lli b) {
   return ans;
 }
 
+double round_up(double value, int decimal_places) {
+    const double multiplier = std::pow(10.0, decimal_places);
+    return std::ceil(value * multiplier) / multiplier;
+}
+
 void split(const string &s, char delim, vector<string> &elems) {
     stringstream ss;
     ss.str(s);
@@ -107,23 +113,25 @@ vector<string> split(const string &s, char delim) {
 }
 
 void solve(int testcase) {
+  cin.precision(100);
   string str;
   int q = 0;
   int d = 0;
   int n = 0;
-  double p = 0;
+  int p = 0;
   cin >> str;
   cout << str << endl;
   str = str.substr(1, str.length());
   double amount = stod(str);
-  q = amount/0.25;
+  q = (int)(amount / 0.25);
   amount -= q*0.25;
-  d = amount / 0.10;
-  amount -= d*0.10;
-  n = amount / 0.05;
+  d = (int)(amount / 0.10);
+  amount -= d*0.10; 
+  n = (int)(amount / 0.05);
   amount -= n*0.05;
-  p = amount / 0.01;
-
+  p = (int)(amount / 0.01);
+  amount -= p*0.01;
+  cout << amount << endl;
   cout << "Quarters=" << q << endl;
   cout << "Dimes=" << d << endl;
   cout << "Nickels=" << n << endl;
