@@ -92,48 +92,38 @@ lli power(lli a,lli b) {
 }
 
 void split(const string &s, char delim, vector<string> &elems) {
-  stringstream ss;
-  ss.str(s);
-  string item;
-  while (getline(ss, item, delim)) {
-    elems.push_back(item);
-  }
+    stringstream ss;
+    ss.str(s);
+    string item;
+    while (getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
 }
 
 vector<string> split(const string &s, char delim) {
-  vector<string> elems;
-  split(s, delim, elems);
-  return elems;
+    vector<string> elems;
+    split(s, delim, elems);
+    return elems;
 }
 
+lli fibonacci(lli n) {
+  lli f[n+2];
+  f[0] = 0;
+  f[1] = 1;
+  for (long long unsigned int i = 2; i <= n; i++)
+    f[i] = f[i-1] + f[i-2];
+  return f[n];
+}
 void solve(int testcase) {
-  cin.ignore();
-  cout << fixed;
-  cout.precision(2);
-  int n;
+  lli n;
   cin >> n;
-  string combinedStr;
-  while (n >= 0) {
-    string temp, str;
-    getline(cin, temp);
-    for (long long unsigned int i = 0; i < temp.length(); i++) {
-      if ((int(temp[i]) >= 65 && int(temp[i]) <= 90) || (int(temp[i]) >= 97 && int(temp[i]) <= 122))
-        str += temp[i];
-    }
-    transform(str.begin(), str.end(), str.begin(), ::toupper);
-    combinedStr += str;
-    n--;
-  }
-  vi arr(26, 0);
-  for (long long unsigned int i = 0; i < combinedStr.length(); i++)
-    arr[(int(combinedStr[i])-65)]++;
-  for (long long unsigned int i = 0; i < arr.size(); i++)
-    cout << (char(i+65)) << ": " << (arr[i]/(double)combinedStr.length()*100) << "%" << endl;
+  cout << n << " = " << fibonacci(n-1) << endl;
 }
 
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
+
   lli testcases;
   cin>>testcases;
   for(int testcase=0; testcase<testcases; testcase++) {
