@@ -125,11 +125,10 @@ void solve(int testcase) {
     n--;
   }
   vi arr(26, 0);
-  cout << combinedStr << endl;
   for (long long unsigned int i = 0; i < combinedStr.length(); i++)
     arr[(int(combinedStr[i])-65)]++;
   for (long long unsigned int i = 0; i < arr.size(); i++)
-    cout << (char(i+65)) << ": " << (arr[i]/(double)combinedStr.length()*100) << "%" << endl;
+    cout << (char(i+65)) << ": " << (float(int((arr[i]/combinedStr.length()*100)*100 + 0.5))/100) << "%" << endl;
 }
 
 int main() {

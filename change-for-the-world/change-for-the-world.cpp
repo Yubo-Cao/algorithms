@@ -92,11 +92,6 @@ lli power(lli a,lli b) {
   return ans;
 }
 
-double round_up(double value, int decimal_places) {
-    const double multiplier = std::pow(10.0, decimal_places);
-    return std::ceil(value * multiplier) / multiplier;
-}
-
 void split(const string &s, char delim, vector<string> &elems) {
     stringstream ss;
     ss.str(s);
@@ -129,7 +124,8 @@ void solve(int testcase) {
   amount -= d*0.10; 
   n = (int)(amount / 0.05);
   amount -= n*0.05;
-  p = (int)(amount / 0.01);
+  amount = 
+  p = (amount / 0.01);
   amount -= p*0.01;
   cout << amount << endl;
   cout << "Quarters=" << q << endl;

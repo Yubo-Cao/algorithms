@@ -106,8 +106,8 @@ vector<string> split(const string &s, char delim) {
     return elems;
 }
 
-double round_up(double value, int decimal_places) {
-    const double multiplier = std::pow(10.0, decimal_places);
+double round(double value, int decimal_places) {
+    const double multiplier = pow(10.0, decimal_places);
     return std::ceil(value * multiplier) / multiplier;
 }
 
@@ -123,8 +123,11 @@ void solve(int testcase) {
     cout << (num1-num2) << " " << (num2-num1) << endl;
   else if (operation == "*")
     cout << (num1*num2) << " " << (num2*num1) << endl;
-  else if (operation == "/")
-    cout << (num1/num2) << " " << (round_up(num2/num1, 1)) << endl;
+  else if (operation == "/") {
+      double result = num2/num1;
+      result = float(int(result*10 +0.5))/10;
+      cout << (num1/num2) << " " << result << endl;
+  }
 }
 
 int main() {
