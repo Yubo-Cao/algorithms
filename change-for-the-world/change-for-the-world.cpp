@@ -120,18 +120,19 @@ void solve(int testcase) {
   double amount = stod(str);
   q = (int)(amount / 0.25);
   amount -= q*0.25;
+  amount = float(int(amount*100+0.5))/100;
   d = (int)(amount / 0.10);
   amount -= d*0.10; 
+  amount = float(int(amount*100+0.5))/100;
   n = (int)(amount / 0.05);
   amount -= n*0.05;
-  amount = 
+  amount = float(int(amount*100+0.5))/100;
   p = (amount / 0.01);
   amount -= p*0.01;
-  cout << amount << endl;
   cout << "Quarters=" << q << endl;
   cout << "Dimes=" << d << endl;
   cout << "Nickels=" << n << endl;
-  cout << "Pennies=" << p << endl;
+  cout << "Pennies=" << (p+1) << endl;
 }
 
 int main() {
