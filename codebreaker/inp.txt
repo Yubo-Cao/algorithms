@@ -1,0 +1,5 @@
+1
+3
+The quick red fox jumps over the lazy brown dog.
+The above sentence contains every letter in the English language.
+Don’t forget to ignore punctuation and numbers; they’re not relevant!
