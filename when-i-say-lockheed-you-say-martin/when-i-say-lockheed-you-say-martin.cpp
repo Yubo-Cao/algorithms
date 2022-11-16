@@ -111,44 +111,26 @@ bool toBool(std::string const& s) {
      return s != "0";
 }
 
-void findAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr)
-{
-    size_t pos = data.find(toSearch);
-    while( pos != std::string::npos)
-    {
-        data.replace(pos, toSearch.size(), replaceStr);
-        pos =data.find(toSearch, pos + replaceStr.size());
-    }
-}
-
 void solve(int testcase) {
-  long long unsigned int n;
+  int n;
   cin >> n;
-  vector<string> extensions = {};
-  for (long long unsigned int i = 0; i < n; i++) {
-      string str;
-      cin >> str;
-      str = str.substr(str.find(".")+1, str.back());
-      extensions.push_back(str);
-  }
-  vector<string> iterate = {};
-  for (long long unsigned int i = 0; i < extensions.size(); i++) {
-      int count = 0;
-      if (find(iterate.begin(), iterate.end(), extensions[i]) == iterate.end()) {
-          iterate.push_back(extensions[i]);
-          for (string str : extensions) {
-              if (str == extensions[i])
-                count++;
-          }
-          cout << extensions[i] << " " << count << endl;
-      }
-  }
+  if (n % 3 == 0 && n % 7 == 0)
+    cout << "LOCKHEEDMARTIN" << endl;
+  else if (n % 3 == 0)
+    cout << "LOCKHEED" << endl;
+  else if (n % 7 == 0)
+    cout << "MARTIN" << endl;
+  else
+    cout << n << endl;
 }
 
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
-  for(int testcase=0; testcase<1; testcase++) {
+
+  lli testcases;
+  cin>>testcases;
+  for(int testcase=0; testcase<testcases; testcase++) {
     solve(testcase);
   }
 }

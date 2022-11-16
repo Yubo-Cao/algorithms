@@ -122,33 +122,32 @@ void findAndReplaceAll(std::string & data, std::string toSearch, std::string rep
 }
 
 void solve(int testcase) {
-  long long unsigned int n;
-  cin >> n;
-  vector<string> extensions = {};
-  for (long long unsigned int i = 0; i < n; i++) {
-      string str;
-      cin >> str;
-      str = str.substr(str.find(".")+1, str.back());
-      extensions.push_back(str);
-  }
-  vector<string> iterate = {};
-  for (long long unsigned int i = 0; i < extensions.size(); i++) {
-      int count = 0;
-      if (find(iterate.begin(), iterate.end(), extensions[i]) == iterate.end()) {
-          iterate.push_back(extensions[i]);
-          for (string str : extensions) {
-              if (str == extensions[i])
-                count++;
-          }
-          cout << extensions[i] << " " << count << endl;
-      }
+  string line;
+  getline(cin, line);
+  findAndReplaceAll(line, ", ", ",");
+  vector<string> arr = split(line, ',');
+  int side1 = stoi(arr[0]);
+  int side2 = stoi(arr[1]);
+  int side3 = stoi(arr[2]);
+  if ((side1+side2 <= side3) || (side1+side3 <= side2) || (side3+side2 <= side1))
+    cout << "Not a Triangle" << endl;
+  else {
+      if (side1 == side2 && side2 == side3)
+        cout << "Equilateral" << endl;
+      else if (side1 == side2 || side2 == side3 || side1 == side3)
+        cout << "Isosceles" << endl;
+      else
+        cout << "Scalene" << endl;
   }
 }
 
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
-  for(int testcase=0; testcase<1; testcase++) {
+  lli testcases;
+  cin>>testcases;
+  cin.ignore();
+  for(int testcase=0; testcase<testcases; testcase++) {
     solve(testcase);
   }
 }

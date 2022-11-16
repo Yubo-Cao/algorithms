@@ -122,33 +122,33 @@ void findAndReplaceAll(std::string & data, std::string toSearch, std::string rep
 }
 
 void solve(int testcase) {
-  long long unsigned int n;
-  cin >> n;
-  vector<string> extensions = {};
-  for (long long unsigned int i = 0; i < n; i++) {
-      string str;
-      cin >> str;
-      str = str.substr(str.find(".")+1, str.back());
-      extensions.push_back(str);
+  string line;
+  getline(cin, line);
+  vector<string> dimensions = split(line, ' ');
+  for (long long unsigned int i = 0; i < dimensions.size(); i++) {
+    string str = dimensions[i];
+    if (i == dimensions.size()-1) {
+        if (stoi(str) % 2 == 0)
+          cout << stoi(str)+2 << endl;
+        else
+          cout << stoi(str)+1 << endl;
+    }
+    else {
+      if (stoi(str) % 2 == 0)
+        cout << stoi(str)+2 << " ";
+      else
+        cout << stoi(str)+1 << " ";
   }
-  vector<string> iterate = {};
-  for (long long unsigned int i = 0; i < extensions.size(); i++) {
-      int count = 0;
-      if (find(iterate.begin(), iterate.end(), extensions[i]) == iterate.end()) {
-          iterate.push_back(extensions[i]);
-          for (string str : extensions) {
-              if (str == extensions[i])
-                count++;
-          }
-          cout << extensions[i] << " " << count << endl;
-      }
   }
 }
 
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
-  for(int testcase=0; testcase<1; testcase++) {
+  lli testcases;
+  cin>>testcases;
+  cin.ignore();
+  for(int testcase=0; testcase<testcases; testcase++) {
     solve(testcase);
   }
 }

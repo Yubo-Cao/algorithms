@@ -122,25 +122,24 @@ void findAndReplaceAll(std::string & data, std::string toSearch, std::string rep
 }
 
 void solve(int testcase) {
-  long long unsigned int n;
-  cin >> n;
-  vector<string> extensions = {};
-  for (long long unsigned int i = 0; i < n; i++) {
-      string str;
-      cin >> str;
-      str = str.substr(str.find(".")+1, str.back());
-      extensions.push_back(str);
+  vector<string> lastYear;
+  vector<string> thisYear;
+  for (int i = 0; i < 2; i++) {
+      string line;
+      getline(cin, line);
+      if (i == 0)
+        lastYear = split(line, ',');
+      else
+        thisYear = split(line, ',');
   }
-  vector<string> iterate = {};
-  for (long long unsigned int i = 0; i < extensions.size(); i++) {
-      int count = 0;
-      if (find(iterate.begin(), iterate.end(), extensions[i]) == iterate.end()) {
-          iterate.push_back(extensions[i]);
-          for (string str : extensions) {
-              if (str == extensions[i])
-                count++;
-          }
-          cout << extensions[i] << " " << count << endl;
+  vector<string> lastYearNotThisYear;
+  vector<string> bothYears;
+  vector<string> thisYearNotLastYear;
+  for (string str : lastYear) {
+      for (string str2 : thisYear) {
+          if (str == str2 && (find(bothYears.begin(), bothYears.end(), str) == bothYears.end()))
+            bothYears.push_back(str);
+          else if (find(lastYear.begin(), lastYear.end(), str) == lastYear.end() &&
       }
   }
 }
@@ -148,7 +147,10 @@ void solve(int testcase) {
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
-  for(int testcase=0; testcase<1; testcase++) {
+  lli testcases;
+  cin>>testcases;
+  cin.ignore();
+  for(int testcase=0; testcase<testcases; testcase++) {
     solve(testcase);
   }
 }

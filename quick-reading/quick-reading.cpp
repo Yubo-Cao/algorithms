@@ -8,6 +8,7 @@
 #include<numeric>
 #include<sstream>
 #include<iterator>
+#include<bitset>
 #include<climits>
 
 using namespace std;
@@ -92,30 +93,50 @@ lli power(lli a,lli b) {
 }
 
 void split(const string &s, char delim, vector<string> &elems) {
-    stringstream ss;
-    ss.str(s);
-    string item;
-    while (getline(ss, item, delim)) {
-        elems.push_back(item);
-    }
+  stringstream ss;
+  ss.str(s);
+  string item;
+  while (getline(ss, item, delim)) {
+    elems.push_back(item);
+  }
 }
 
 vector<string> split(const string &s, char delim) {
-    vector<string> elems;
-    split(s, delim, elems);
-    return elems;
+  vector<string> elems;
+  split(s, delim, elems);
+  return elems;
 }
-vector<string> extList = {};
+
+bool toBool(std::string const& s) {
+     return s != "0";
+}
+
 void solve(int testcase) {
-  string str;
-  cin >> str;
-  string ext = str.substr(str.find(".")+1, str.length());
-  cout << ext << endl;
+  string misspelled, word;
+  cin >> misspelled >> word;
+  if (word.front() == misspelled.front() && word.back() == misspelled.back()) {
+      for (long long unsigned int i = 0; i < misspelled.length(); i++) {
+        bool check = 0;
+        for (long long unsigned int j = 0; j < word.length(); j++) {
+            if (misspelled[i] == word[j])
+              check = 1;
+        }
+        if (check == 0) {
+            cout << misspelled << endl;
+            break;
+        }
+        if (i == misspelled.length()-1)
+          cout << word << endl;
+  }
+  }
+  else
+    cout << misspelled << endl;
 }
 
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
+
   lli testcases;
   cin>>testcases;
   for(int testcase=0; testcase<testcases; testcase++) {

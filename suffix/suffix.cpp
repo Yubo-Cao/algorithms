@@ -112,11 +112,15 @@ bool toBool(std::string const& s) {
 }
 
 void solve(int testcase) {
-  string str;
+  string str, lastTwo;
   cin >> str;
   str = str.substr(0, str.find("th"));
+  if (str.length() > 1)
+    lastTwo = str.substr(str.length()-2, str.length());
   char lastDigit = str.back();
-  if (lastDigit == '1')
+  if (lastTwo == "11" || lastTwo == "12" || lastTwo == "13")
+    cout << str << "th" << endl;
+  else if (lastDigit == '1')
     cout << str << "st" << endl;
   else if (lastDigit == '2')
     cout << str << "nd" << endl;
