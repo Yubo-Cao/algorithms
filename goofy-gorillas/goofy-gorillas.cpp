@@ -107,13 +107,17 @@ vector<string> split(const string &s, char delim) {
   return elems;
 }
 
+bool toBool(std::string const& s) {
+     return s != "0";
+}
+
 void solve(int testcase) {
   string a, b;
   cin >> a >> b;
-  if (a == "true" && b == "true")
-    cout << "true" << endl;
-  else
+  if (a != b)
     cout << "false" << endl;
+  else
+    cout << "true" << endl;
 }
 
 int main() {
