@@ -1,10 +1,10 @@
 1
 5 3
-Deck
+Cannon
 Engine
 Helm
-Cannon
+Deck
 Anchor
 Engine
-Cannon
+Helm
 Anchor
