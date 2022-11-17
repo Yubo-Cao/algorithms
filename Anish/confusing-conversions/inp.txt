@@ -1,0 +1,5 @@
+4
+formatHeight 5 8
+formatDate 2020 5 2
+concatenate These are all arguments
+concatenate Text can be 123 numbers too

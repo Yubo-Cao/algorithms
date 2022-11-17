@@ -8,6 +8,7 @@
 #include<numeric>
 #include<sstream>
 #include<iterator>
+#include<bitset>
 #include<climits>
 
 using namespace std;
@@ -106,29 +107,44 @@ vector<string> split(const string &s, char delim) {
   return elems;
 }
 
-void solve(int testcase) {
-  cin.ignore();
-  cout << fixed;
-  cout.precision(2);
-  int n;
-  cin >> n;
-  string combinedStr;
-  while (n >= 0) {
-    string temp, str;
-    getline(cin, temp);
-    for (long long unsigned int i = 0; i < temp.length(); i++) {
-      if ((int(temp[i]) >= 65 && int(temp[i]) <= 90) || (int(temp[i]) >= 97 && int(temp[i]) <= 122))
-        str += temp[i]+0.00001;
+bool toBool(std::string const& s) {
+     return s != "0";
+}
+
+void findAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr)
+{
+    size_t pos = data.find(toSearch);
+    while( pos != std::string::npos)
+    {
+        data.replace(pos, toSearch.size(), replaceStr);
+        pos =data.find(toSearch, pos + replaceStr.size());
     }
-    transform(str.begin(), str.end(), str.begin(), ::toupper);
-    combinedStr += str;
-    n--;
+}
+
+void solve(int testcase) {
+  string conversion;
+  cin >> conversion;
+  if (conversion == "formatHeight") {
+      int a, b;
+      cin >> a >> b;
+      cout << a << "\'" << b << "\"" << endl;
   }
-  vi arr(26, 0);
-  for (long long unsigned int i = 0; i < combinedStr.length(); i++)
-    arr[(int(combinedStr[i])-65)]++;
-  for (long long unsigned int i = 0; i < arr.size(); i++)
-    cout << (char(i+65)) << ": " << (float(int(((double)arr[i]/combinedStr.length()*100)*100 + 0.5))/100) << "%" << endl;
+  if (conversion == "formatDate") {
+    string a, b, c;
+    cin >> a >> b >> c;
+    if (b.length() < 2)
+      b = "0" + b;
+    if (c.length() < 2)
+      c = "0" + c;
+    cout << a << b << c << endl;
+  }
+  if (conversion == "concatenate") {
+      cin.ignore();
+      string line;
+      getline(cin, line);
+      findAndReplaceAll(line, " ", ",");
+      cout << line << endl;
+  }
 }
 
 int main() {

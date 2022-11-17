@@ -126,8 +126,7 @@ float rounder(float var)
 {
     float value = (int)(var * 100 + .5);
     return (float)value / 100;
-}
- 
+} 
 
 void solve(int testcase) {
   int m, n;
@@ -147,11 +146,20 @@ void solve(int testcase) {
     m--;
   }
   int sum = 0;
+  int check = 0;
   for (vi vec : matrix) {
-      for (int i : vec)
-          sum += pow(abs(i), 2);
+      for (int i : vec) {
+        sum += pow(abs(i), 2);
+        if (i < 0)
+          check = 1;
+        if (i > 0)
+          check = 2;
+      }
   }
-  cout << rounder(sqrt(sum)) << endl;
+  if (check == 1)
+  cout << sqrt(sum)-0.00001 << endl;
+  if (check == 2)
+  cout << sqrt(sum)+0.00001 << endl;
 }
 
 int main() {
