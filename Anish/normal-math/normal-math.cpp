@@ -122,28 +122,36 @@ void findAndReplaceAll(std::string & data, std::string toSearch, std::string rep
     }
 }
 
+float rounder(float var)
+{
+    float value = (int)(var * 100 + .5);
+    return (float)value / 100;
+}
+ 
+
 void solve(int testcase) {
-  vector<vector<double>> matrix;
-  for (int i = 0; i < 2; i++) {
-    double a, b;
-    cin >> a >> b;
-    vector<double> temp = {a, b};
-    matrix.push_back(temp);
+  int m, n;
+  cin >> m >> n;
+  cin.ignore();
+  vvi matrix;
+  cout.precision(2);
+  cout << fixed;
+  while (m > 0) {
+    string line;
+    getline(cin, line);
+    vector<string> temp = split(line, ' ');
+    vi row;
+    for (string str : temp)
+      row.push_back(stoi(str));
+    matrix.push_back(row);
+    m--;
   }
-  double a, b, c, d, denom;
-  a = matrix[0][0];
-  b = matrix[0][1];
-  c = matrix[1][0];
-  d = matrix[1][1];
-  denom = a*d-b*c;
-  matrix[0][0] = d/denom;
-  matrix[0][1] = -b/denom;
-  matrix[1][0] = -c/denom;
-  matrix[1][1] = a/denom;
-  int f1, f2;
-  cin >> f1 >> f2;
-  cout << round((matrix[0][0]*f1+matrix[1][0]*f2)+0.00001) << " ";
-  cout << round((matrix[0][1]*f1+matrix[1][1]*f2)+0.00001) << endl;
+  int sum = 0;
+  for (vi vec : matrix) {
+      for (int i : vec)
+          sum += pow(abs(i), 2);
+  }
+  cout << rounder(sqrt(sum)) << endl;
 }
 
 int main() {
