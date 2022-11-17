@@ -1,6 +1,6 @@
 1
 5 3
-Cannon
+Fire Suppression System
 Engine
 Helm
 Deck

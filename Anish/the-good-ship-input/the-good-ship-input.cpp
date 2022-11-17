@@ -127,13 +127,15 @@ void solve(int testcase) {
   vector<string> answer;
   int x, y;
   cin >> x >> y;
+  cin.ignore();
   for (int i = 0; i < x; i++) {
       string str;
-      cin >> str;
+      getline(cin, str);
       sysList.push_back(str);
   }
   for (int i = 0; i < y; i++) {
-      string str; cin >> str;
+      string str;
+      getline(cin, str);
       reportList.push_back(str);
   }
   for (string str : sysList) {
@@ -148,7 +150,6 @@ void solve(int testcase) {
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
-
   lli testcases;
   cin>>testcases;
   for(int testcase=0; testcase<testcases; testcase++) {
