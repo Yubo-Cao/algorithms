@@ -1,6 +1,12 @@
-Hi, other two people who may look at this directory.
+# Algorithms
 
-I am good at `java.util.regex.*`, `java.time.format.DateTimeFormatter`, and basic usage of collections in java,
-as demonstrated in this directory. Therefore, feel free to ask me parse any string that may be described by regex. If not, which is unlikely to exists, some dirty work with `Stack<T>` and `Queue<T>` will also make it work out just fine(hopefully).
+## Motivation
 
-My algorithm, is weaker. Therefore, consider study some graph/topography/dynamic processing/etc.
+This is the repository where we shall study algorithms. It originally start as a hub to solve code question problems. For now, it mainly serves as a hub for all kinds of algorithm questions.
+
+The majority of the solutions were provided in C++. However, Java and Python will also be used, whenever possible.
+
+## Author
+
+- [@anishgoyal1108](https://github.com/anishgoyal1108)
+- [@Yubo-Cao](https://github.com/Yubo-Cao)

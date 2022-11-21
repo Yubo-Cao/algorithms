@@ -1,3 +1,4 @@
+package codequest;
 import java.util.Scanner;
 
 public class BringJohnGlennHome {

@@ -1,3 +1,4 @@
+package codequest;
 import java.util.Arrays;
 import java.util.NavigableMap;
 import java.util.Scanner;
