@@ -253,3 +253,176 @@ int main()
     return 0;
 }
 ```
+
+# High Precision
+
+## Storage
+
+To store a high-precision number, we can use an array to store the digits. For example, `12345` can be stored in big-endian as `[1, 2, 3, 4, 5]`, or in little-endian as `[5, 4, 3, 2, 1]`.
+
+## Add
+
+Addition of 2 large integers.
+
+- Store digits in big-endian.
+- Use 2 pointers to iterate through the 2 arrays.
+  - The result is the sum of the 2 digits plus the carry.
+  - The carry is obtained when the sum is greater than 10.
+- Finally, add the carry to the result if it is not 0.
+
+```cpp
+vector<int> add(vector<int> &A, vector<int> &B) {
+    // use pointer to prevent copy
+    vector<int> C;
+
+    if (A.size() < B.size()) return add(B, A);
+
+    int t = 0;
+    for (int i = 0; i < A.size(); i++) {
+        t += A[i];
+        if (i < B.size()) t += B[i];
+        C.push_back(t % 10);
+        t /= 10;  // if larger than 10, 1
+    }
+    if (t) C.push_back(1);
+    return C;
+}
+```
+
+- Time complexity: $O(n)$
+- The algorithm assumes that the input is stored in small-endian. Therefore, it can happily add the digits from the least significant digit to the most significant digit. If the input is stored in big-endian, we need to reverse the input first.
+
+If we want to do better, we can compress the digits into a single integer. For example, `12345` can be stored as `[123, 45]`. 
+
+## Sub
+
+Subtraction of 2 large integers. If `A < B`, return `-sub(B, A)`.
+
+```cpp
+vector<int> sub(vector<int> &A, vector<int> &B) {
+    vector<int> C;
+    for (int i = 0, t = 0; i < A.size(); i++) {
+        t = A[i] - t;
+        if (i < B.size()) t -= B[i];
+        C.push_back((t + 10) % 10);  // (t < 0)? t + 10: t. Notice if t >= 0, (t + 10) % 10 == t
+        t = (t < 0) ? 1 : 0;         // if we need to get 1 off from previous 1.
+    }
+
+    while (C.size() > 1 && C.back() == 0) {
+        C.pop_back();  // remove 0 follows, but keep 0 if 0 is answer.
+    }
+    return C;
+}
+```
+
+- Time complexity: $O(n)$
+- This algorithm assumes big-endian and `A > B`. If this is not the case, we need to reverse the input first.
+
+```cpp
+// return negative if A < B, 0 if A == B, positive if A > B
+int cmp(vector<int> &A, vector<int> &B) {
+    if (A.size() != B.size()) return A.size() > B.size();
+    int i = 0, sz = A.size();
+    for (int i = sz; i >= 0; i--)
+        if (A[i] != B[i]) return A[i] - B[i];
+    return 0;
+}
+// output
+int main() {
+    string a, b;
+    vector<int> A, B;
+
+    cin >> a >> b;
+    for (int i = a.size() - 1; i >= 0; i--) A.push_back(a[i] - '0');
+    for (int i = b.size() - 1; i >= 0; i--) B.push_back(b[i] - '0');
+
+    if (cmp(A, B) > 0) {
+        auto C = sub(A, B);
+        for (int i = C.size() - 1; i >= 0; i--) printf("%d", C[i]);
+    } else {
+        auto C = sub(B, A);
+        cout << "-";
+        for (int i = C.size() - 1; i >= 0; i--) printf("%d", C[i]);
+    }
+
+    return 0;
+}
+```
+
+## Mul
+ 
+- Store digits in big-endian. Only 1 is a large number $A$, and another is a small number ($< 100000$) $b$.
+- In each step, a temporary number $t = t_{i - 1} + A_i \times b$ is calculated. And then, the current digit is $t \mod 10$ and the carry is $t \div 10$.
+- Finally, get rid of any extra 0s and or left over $t$.
+
+```cpp
+// C = A * b. High precision number * low precision
+vector<int> mul(vector<int> &A, int b) {
+    vector<int> C;
+    int t = 0;
+    for (int i = 0; i < A.size(); i++) {
+        t += A[i] * b;
+        C.push_back(t % 10);
+        t /= 10;
+    }
+    while (t > 0) {
+        C.push_back(t % 10);
+        t /= 10;
+    }
+    return C;
+}
+```
+
+- Suppose we need to multiply 2 large integers $A$ and $B$. We can do it by multiplying $A$ with each digit of $B$ and adding them together.
+  - $A \times B = \sum_{i = 0}^{n - 1} A \times B_i \times 10^i$
+- The below implementation is simply cosmetic of the above algorithm. However, we didn't call `add` directly, but rather, manipulate digits directly.
+
+```cpp
+// C = A * B. High precision number * high precision number
+vector<int> mul(vector<int> &A, vector<int> &B) {
+    vector<int> C(A.size() + B.size(), 0);
+    for (int i = 0; i < A.size(); i++) {
+        int t = 0;
+        for (int j = 0; j < B.size(); j++) {
+            t += C[i + j] + A[i] * B[j];
+            C[i + j] = t % 10;
+            t /= 10;
+        }
+        C[i + B.size()] = t;
+    }
+    while (C.size() > 1 && C.back() == 0) C.pop_back();
+    return C;
+}
+```
+
+- Time complexity: $O(n^2)$ for the multiplication of 2 large integers. If we only care about the multiplication of 1 large number with a small number, the time complexity is $O(n)$.
+
+<!-- TODO: One day I will learn FFT -->
+
+## Div
+
+We shall only consider the case where a large integer, $A$ is divided by a small integer, $b$.
+- First, get the most significant digit of $A$, $A_1$.
+  - Then the result, $c_1$ is $A_1 \div b$.
+  - And the remainder, $r_1$ is $A_1 \mod b$.
+- Put the remainder of the previous step with the next digit by multiplying 10, $r_2 = r_1 \times 10 + A_2$.
+  - Then the result, $c_2$ is $t_1 \times 10 + A_2 \div b$.
+  - And the remainder, $r_3$ is $r_2 \times 10 + A_2 \mod b$.
+- Now we can perform the above steps until we reach the least significant digit of $A$. The result is $c_1, c_2, \dots, c_n$.
+
+```cpp
+vector<int> div(vector<int> &A, int b, int &r) {
+    vector<int> C;
+    r = 0;
+    for (int i = A.size() - 1; i >= 0; i--) {
+        r = r * 10 + A[i];
+        C.push_back(r / b);
+        r %= b;
+    }
+    reverse(C.begin(), C.end());
+    while (C.size() > 1 && C.back() == 0) C.pop_back();
+    return C;
+}
+```
+
+- Time complexity: $O(n)$
