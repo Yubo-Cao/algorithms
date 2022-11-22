@@ -32,7 +32,7 @@ Just to make it make sense, let's think about it.
 - For all numbers left to `i`, they are smaller than the pivot.
 - For all numbers right to `j`, they are larger than the pivot.
 - Hence, when you concatenate, they must be in the right order.
-
+- Unstable sorting algorithm. An algorithm is considered unstable if it does not preserve the relative order of elements with equal keys.
 ### Example
 
 #### Basic Sort
@@ -75,8 +75,43 @@ qsort(q, l, i - 1);
 qsort(q, i, r);
 ```
 
-- Unstable sorting algorithm. An algorithm is considered unstable if it does not preserve the relative order of elements with equal keys.
+#### Quick Selection
 
+Find the $k$-th smallest number in an array.
+
+```cpp
+#include <iostream>
+
+using namespace std;
+
+const int N = 1e6 + 10;
+int n, k;
+int q[N];
+
+int qsel(int q[], int l, int r, int k) {
+    if (l >= r) return q[l];
+    int x = q[l + r >> 1], i = l - 1, j = r + 1;
+    while (i < j) {
+        while (q[++i] < x) {}
+        while (q[--j] > x) {}
+        if (i < j) swap(q[i], q[j]);
+    }
+    int s = j - l + 1;                        // number of elements in left
+    if (k <= s) { return qsel(q, l, j, k); }  // only sort left part
+    else                                      // or, if k is larger than pivot, right part
+        return qsel(q, j + 1, r, k - s);      // ∴ O(n) n × (1 + 1/2 + …)  = 2n
+}
+
+int main() {
+    cin >> n >> k;
+    for (int i = 0; i < n; i++) cin >> q[i];
+    cout << qsel(q, 0, n - 1, k) << endl;
+}
+```
+
+- Time complexity: $O(n)$. This is because, in each layer of recursion, we only sort one part of the array, and the other part is discarded. Hence, the time complexity is $O(n) + O(n/2) + O(n/4) + … = O(n)$.
+    - The worst case is $O(n^2)$.
+- Space complexity: $O(1)$
 ## Merge Sort
 
 Divide and conquer. This time, we don't use a pivot, but rather, the midpoint.
