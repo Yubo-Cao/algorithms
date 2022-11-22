@@ -21,35 +21,30 @@ using namespace std;
 
 const int N = 1e6 + 10;
 int n;
-pair<int, int> q[N], t[N];
+int q[N], t[N];
 
-void record_sort(pair<int, int> q[], int l, int r) {
-    if (l >= r) return;
-    int mid = l + r >> 1;
-    record_sort(q, l, mid), record_sort(q, mid + 1, r);
-    int i = l, j = mid + 1, k = 0;
-    while (i <= mid && j <= r) {
-        if (q[i] < q[j])
+long reverse_pair(int q[], int l, int r) {  // 1e6 * (1e6 - 1) ∼ 1e12 < 2^63 - 1
+    if (l >= r) return 0;
+    int m = l + r >> 1;
+    long result = reverse_pair(q, l, m) + reverse_pair(q, m + 1, r);
+    int i = l, j = m + 1, k = 0;
+    while (i <= m && j <= r) {
+        if (q[i] <= q[j])
             t[k++] = q[i++];
-        else
+        else {
             t[k++] = q[j++];
+            result += m - i + 1;  // all the elements, including i is in wrong position
+        }
     }
+    while (i <= m) t[k++] = q[i++];
     while (j <= r) t[k++] = q[j++];
-    while (i <= mid) t[k++] = q[i++];
-    for (i = 0, j = l; j <= r;) q[j++] = t[i++];
+    for (i = l, j = 0; i <= r; i++, j++) q[i] = t[j];
+    return result;
 }
 
 int main() {
     cin >> n;
-    int tmp;
-    for (int i = 0; i < n; i++) {
-        scanf("%d", &tmp);
-        q[i] = make_pair(tmp, i);
-    }
-    record_sort(q, 0, n - 1);
-    int sum = 0;
-    for (int i = 0; i < n; i++) {
-        sum += abs(q[i].second - i);
-    }
-    printf("%d", sum / 2);
+    for (int i = 0; i < n; i++) scanf("%d", &q[i]);
+    cout << reverse_pair(q, 0, n - 1);
+    return 0;
 }
