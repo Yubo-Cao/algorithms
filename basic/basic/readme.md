@@ -33,6 +33,7 @@ Just to make it make sense, let's think about it.
 - For all numbers right to `j`, they are larger than the pivot.
 - Hence, when you concatenate, they must be in the right order.
 - Unstable sorting algorithm. An algorithm is considered unstable if it does not preserve the relative order of elements with equal keys.
+
 ### Example
 
 #### Basic Sort
@@ -60,14 +61,14 @@ void qsort(int q[], int l, int r)
 }
 ```
 
-- Time complexity: $O(n\log{n})$
+- Time complexity: $O(n\\log{n})$
   - This is the average time complexity, in which, the array on average split into 2 equal parts.
-  - ![Merge sort time complexity](sort-complexity.png). 
+  - ![Merge sort time complexity](sort-complexity.png).
   - The worst case is $O(n^2)$.
 - The pivot choice is delicate. If we choose to use `j` as an argument in the recursion, then one must not use `r` as the pivot; similarly, if we choose to use `i` as an argument in the recursion, then one must not use `l` as the pivot. For example:
   - Let's assume the input is `[1, 2]`, and we choose `x = q[r]`.
-  - Then, after the first iteration, `i = 1` and `j = 1`. Nothing changed, and the loop is terminated. Then, `qsort(q, 0, 1)` and `qsort(2, 2)` is called. And one would soon realize, that`qsort(q, 0, 1)` is exactly the same as what we called initially, and infinite recursion occurs.void  qsort(int  q[], int  l, int  r){ if (l  >=  r) return;
- int  x  =  q[(l  +  r) /  2], i  =  l  -  1, j  =  r  +  1; while (i  <  j)    { while (q[++i] <  x)            ; while (q[--j] >  x)            ; if (i  <  j) swap(q[i], q[j]);    } qsort(q, l, j); qsort(q, j  +  1, r);}
+  - Then, after the first iteration, `i = 1` and `j = 1`. Nothing changed, and the loop is terminated. Then, `qsort(q, 0, 1)` and `qsort(2, 2)` is called. And one would soon realize, that`qsort(q, 0, 1)` is exactly the same as what we called initially, and infinite recursion occurs.void  qsort(int  q\[\], int  l, int  r){ if (l  >=  r) return;
+    int  x  =  q\[(l  +  r) /  2\], i  =  l  -  1, j  =  r  +  1; while (i  \<  j)    { while (q\[++i\] \<  x)            ; while (q\[--j\] >  x)            ; if (i  \<  j) swap(q\[i\], q\[j\]);    } qsort(q, l, j); qsort(q, j  +  1, r);}
 - If one wants to use `i` instead of `j` in the recursion call, simply change to:
 
 ```cpp
@@ -110,8 +111,9 @@ int main() {
 ```
 
 - Time complexity: $O(n)$. This is because, in each layer of recursion, we only sort one part of the array, and the other part is discarded. Hence, the time complexity is $O(n) + O(n/2) + O(n/4) + … = O(n)$.
-    - The worst case is $O(n^2)$.
+  - The worst case is $O(n^2)$.
 - Space complexity: $O(1)$
+
 ## Merge Sort
 
 Divide and conquer. This time, we don't use a pivot, but rather, the midpoint.
@@ -123,11 +125,10 @@ Divide and conquer. This time, we don't use a pivot, but rather, the midpoint.
     - In all situations, the smallest element is \`min(l\[0\], r\[0\]), because, after the previous step, the left and right arrays are already sorted.
     - Hence, the smallest element among the rest of the elements is always copied back to the original array.
     - Finally, copy whatever is left in the left or right array to the original array.
-- The time complexity is $O(n\log{n})$, and the space complexity is $O(n)$.
-  - ![Merge sort time complexity](sort-complexity.png)  
-  - For an array with a size of $n$, it takes $\log{n}$ steps to divide the array into 1-element arrays. And for each step, it takes $n$ time to merge the two arrays. Hence, the time complexity is $O(n\log{n})$.
+- The time complexity is $O(n\\log{n})$, and the space complexity is $O(n)$.
+  - ![Merge sort time complexity](sort-complexity.png)
+  - For an array with a size of $n$, it takes $\\log{n}$ steps to divide the array into 1-element arrays. And for each step, it takes $n$ time to merge the two arrays. Hence, the time complexity is $O(n\\log{n})$.
 - Stable sorting algorithm. An algorithm is considered stable if it preserves the relative order of elements with equal keys.
-
 
 ```cpp
 void msort(int q[], int l, int r)
@@ -159,12 +160,11 @@ void msort(int q[], int l, int r)
 }
 ```
 
-
 # Binary Split
 
 ## Integer
 
-For a sequence of elements `E` and a target `k`. If there exists a function `f(e`)` that separates the elements into 2 continuous groups, such that `f(e)` is true for all elements in the first group, and false for all elements in the second group, then we can use binary split to find the threshold such that `f(k-Δ) != f(k+Δ)`.
+For a sequence of elements `E` and a target `k`. If there exists a function `f(e`)`that separates the elements into 2 continuous groups, such that`f(e)`is true for all elements in the first group, and false for all elements in the second group, then we can use binary split to find the threshold such that`f(k-Δ) != f(k+Δ)\`.
 
 The above theory is, however, useless. We probably just care about how to updat the `mid`. And the idea is:
 
@@ -226,9 +226,10 @@ int main()
     return 0;
 }
 ```
+
 ## Float
 
-A floating point binary search is nice: there are simply no boundary conditions. Usually, we will simply use $\epsilon$ to determine the equality of two floating point numbers.
+A floating point binary search is nice: there are simply no boundary conditions. Usually, we will simply use $\\epsilon$ to determine the equality of two floating point numbers.
 
 ```cpp
 #include <iostream>
@@ -292,7 +293,7 @@ vector<int> add(vector<int> &A, vector<int> &B) {
 - Time complexity: $O(n)$
 - The algorithm assumes that the input is stored in small-endian. Therefore, it can happily add the digits from the least significant digit to the most significant digit. If the input is stored in big-endian, we need to reverse the input first.
 
-If we want to do better, we can compress the digits into a single integer. For example, `12345` can be stored as `[123, 45]`. 
+If we want to do better, we can compress the digits into a single integer. For example, `12345` can be stored as `[123, 45]`.
 
 ## Sub
 
@@ -350,10 +351,10 @@ int main() {
 ```
 
 ## Mul
- 
-- Store digits in big-endian. Only 1 is a large number $A$, and another is a small number ($< 100000$) $b$.
-- In each step, a temporary number $t = t_{i - 1} + A_i \times b$ is calculated. And then, the current digit is $t \mod 10$ and the carry is $t \div 10$.
-- Finally, get rid of any extra 0s and or left over $t$.
+
+- Store digits in big-endian. Only 1 is a large number $A$, and another is a small number ($\< 100000$) $b$.
+- In each step, a temporary number $t = t\_{i - 1} + A_i \\times b$ is calculated. And then, the current digit is $t \\mod 10$ and the carry is $t \\div 10$.
+- Finally, get rid of any extra 0s and or leftover $t$.
 
 ```cpp
 // C = A * b. High precision number * low precision
@@ -374,7 +375,7 @@ vector<int> mul(vector<int> &A, int b) {
 ```
 
 - Suppose we need to multiply 2 large integers $A$ and $B$. We can do it by multiplying $A$ with each digit of $B$ and adding them together.
-  - $A \times B = \sum_{i = 0}^{n - 1} A \times B_i \times 10^i$
+  - $A \\times B = \\sum\_{i = 0}^{n - 1} A \\times B_i \\times 10^i$
 - The below implementation is simply cosmetic of the above algorithm. However, we didn't call `add` directly, but rather, manipulate digits directly.
 
 ```cpp
@@ -402,13 +403,14 @@ vector<int> mul(vector<int> &A, vector<int> &B) {
 ## Div
 
 We shall only consider the case where a large integer, $A$ is divided by a small integer, $b$.
+
 - First, get the most significant digit of $A$, $A_1$.
-  - Then the result, $c_1$ is $A_1 \div b$.
-  - And the remainder, $r_1$ is $A_1 \mod b$.
-- Put the remainder of the previous step with the next digit by multiplying 10, $r_2 = r_1 \times 10 + A_2$.
-  - Then the result, $c_2$ is $t_1 \times 10 + A_2 \div b$.
-  - And the remainder, $r_3$ is $r_2 \times 10 + A_2 \mod b$.
-- Now we can perform the above steps until we reach the least significant digit of $A$. The result is $c_1, c_2, \dots, c_n$.
+  - Then the result, $c_1$ is $A_1 \\div b$.
+  - And the remainder, $r_1$ is $A_1 \\mod b$.
+- Put the remainder of the previous step with the next digit by multiplying 10, $r_2 = r_1 \\times 10 + A_2$.
+  - Then the result, $c_2$ is $t_1 \\times 10 + A_2 \\div b$.
+  - And the remainder, $r_3$ is $r_2 \\times 10 + A_2 \\mod b$.
+- Now we can perform the above steps until we reach the least significant digit of $A$. The result is $c_1, c_2, \\dots, c_n$.
 
 ```cpp
 vector<int> div(vector<int> &A, int b, int &r) {
@@ -432,7 +434,7 @@ vector<int> div(vector<int> &A, int b, int &r) {
 ## Prefix Sum
 
 - Suppose we have an array $A$ of size $n$.
-- A prefix sum array $S$ of $A$ is an array of size $n + 1$ such that $S[i]$ is the sum of $A[0], A[1], \dots, A[i - 1]$.
+- A prefix sum array $S$ of $A$ is an array of size $n + 1$ such that $S\[i\]$ is the sum of $A\[0\], A\[1\], \\dots, A\[i - 1\]$.
 
 To calculate the prefix sum array $S$ of $A$, we can do it in $O(n)$ time.
 
@@ -444,7 +446,7 @@ vector<int> prefix_sum(vector<int> &A) {
 }
 ```
 
-The purpose of prefix sum is to find the sum of a subarray $A[i], A[i + 1], \dots, A[j]$ in $O(1)$ time. It would be $S[j] - S[i - 1]$. We define that $S[0] = 0$, simply because this helps to handle boundary cases. **It is important to remember the idea of caching the sum of a subarray.**
+The purpose of prefix sum is to find the sum of a subarray $A\[i\], A\[i + 1\], \\dots, A\[j\]$ in $O(1)$ time. It would be $S\[j\] - S\[i - 1\]$. We define that $S\[0\] = 0$, simply because this helps to handle boundary cases. **It is important to remember the idea of caching the sum of a subarray.**
 
 ```cpp
 int main() {
@@ -462,9 +464,9 @@ int main() {
 
 ### 2D Prefix Sum
 
-- Suppose we have a 2D array $A$ of size $n \times m$. And we want to calculate
-the sum of a subarray $A[i][j], A[i + 1][j], \dots, A[i + k][j + l]$, we can calculate a 2D prefix sum array $S$ of $A$, where each element $S[i][j]$ is the sum of subarray $A[0][0], A[0][1], \dots, A[0][j-1], A[1][0], A[1][1], \dots, A[1][j-1], \dots, A[i-1][0], A[i-1][1], \dots, A[i-1][j-1]$.
-  - Then the sum of the subarray is $S[i + k][j + l] - S[i - 1][j + l] - S[i + k][j - 1] + S[i - 1][j - 1]$.
+- Suppose we have a 2D array $A$ of size $n \\times m$. And we want to calculate
+  the sum of a subarray $A\[i\]\[j\], A\[i + 1\]\[j\], \\dots, A\[i + k\]\[j + l\]$, we can calculate a 2D prefix sum array $S$ of $A$, where each element $S\[i\]\[j\]$ is the sum of subarray $A\[0\]\[0\], A\[0\]\[1\], \\dots, A\[0\]\[j-1\], A\[1\]\[0\], A\[1\]\[1\], \\dots, A\[1\]\[j-1\], \\dots, A\[i-1\]\[0\], A\[i-1\]\[1\], \\dots, A\[i-1\]\[j-1\]$.
+  - Then the sum of the subarray is $S\[i + k\]\[j + l\] - S\[i - 1\]\[j + l\] - S\[i + k\]\[j - 1\] + S\[i - 1\]\[j - 1\]$.
 
 ```cpp
 int main() {
@@ -489,13 +491,13 @@ int main() {
 }
 ```
 
-![](prefix-sum.png)  
+![](prefix-sum.png)
 
 ## Finite Difference
 
 - Suppose we have an array $A$ of size $n$.
-- A finite difference array $D$ of $A$ is an array of size $n - 1$ such that $D[i]$ is the difference between $A[i]$ and $A[i + 1]$.
-  - The formal definition, is a sequence of number $D_1, D_2, \dots, D_{n - 1}$ such that $A_n = D_1 + D_2 + \dots + D_{n - 1}$. And by previous, $D_i = A_{i + 1} - A_i$ and it thus always cancels each other out. And we call
+- A finite difference array $D$ of $A$ is an array of size $n - 1$ such that $D\[i\]$ is the difference between $A\[i\]$ and $A\[i + 1\]$.
+  - The formal definition, is a sequence of number $D_1, D_2, \\dots, D\_{n - 1}$ such that $A_n = D_1 + D_2 + \\dots + D\_{n - 1}$. And by previous, $D_i = A\_{i + 1} - A_i$ and it thus always cancels each other out. And we call
     - D as the finite difference array of A.
     - And A as the prefix sum array of D.
     - **Prefix sum array is the inverse of finite difference array.**
@@ -536,11 +538,10 @@ int main() {
 
 ### 2D Finite Difference
 
-![](2d-prefix-sum.png)  
+![](2d-prefix-sum.png)
 
-- The above algorithm update the subarray $A[x_1][y_1] \dots A[x_2][y_2]$ by $c$.
-- So, we shall assume that the finite difference array $D$ is initialized to 0. And then we update the subarray $D[x_1][y_1] \dots D[x_2][y_2]$ by $c$.
-
+- The above algorithm update the subarray $A\[x_1\]\[y_1\] \\dots A\[x_2\]\[y_2\]$ by $c$.
+- So, we shall assume that the finite difference array $D$ is initialized to 0. And then we update the subarray $D\[x_1\]\[y_1\] \\dots D\[x_2\]\[y_2\]$ by $c$.
 
 ```cpp
 void insert(int x1, int y1, int x2, int y2, int c) {
@@ -574,5 +575,149 @@ int main() {
         }
         printf("\n");
     }
+}
+```
+
+# Two Pointer
+
+- The two-pointer algorithm is a technique that uses two-pointers to traverse an array (or multiple).
+  - In merge sort, we use two pointers that point to 2 subarrays.
+  - In quick sort, we use two pointers that point to 1 array to partition the array.
+- In general, it looks like that:
+
+```cpp
+for (int i = 0, j = 0; i < n; i++) {
+    while (j < n && condition) 
+        j++;
+    // do something
+}
+```
+
+- We use 2 pointers, to compress the time complexity from $O(n^2)$ to $O(n)$.
+
+## Word Splitting
+
+```cpp
+#include <string.h>
+
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    char str[1000];
+    gets(str);
+
+    int n = strlen(str);
+
+    for (int i = 0; i < n; i++) {
+        int j = i;
+        while (j < n && str[j] != ' ') j++;
+
+        for (int k = i; k < j; k++)
+            cout << str[k];
+        cout << endl;
+        i = j;
+    }
+
+    return 0;
+}
+```
+
+## Longest Continuous Non-duplicate Subsequence
+
+```cpp
+int two_pointer(int s[]) {
+    int ans = 0;
+    for (int i = 0, j = 0; i < n; i++) {
+        vis[s[i]]++;
+        while (vis[s[i]] > 1) vis[s[j++]]--;
+        ans = max(ans, i - j + 1);
+    }
+    return ans;
+}
+```
+
+# Bit Manipulation
+
+To convert a number to binary, we sum up the powers of 2 that are less than or equal to the number.
+
+- `n = 15 = 2^3 + 2^2 + 2^1 + 2^0 = 1111`
+
+## Common Operation
+
+### k-th bit
+
+- Move the `k`th bit to the rightmost position: `n >> k`
+- See the last bit: `n & 1`
+- To see `k`th bit: `n >> k & 1`
+
+### Representation of numbers
+
+There exist 3 types of code to represent numbers:
+
+- Original, the positional notation. For example, `7 = 111`
+- Radix-minus-one complement, where each bit is flipped. For example, `7 = 11111000`
+- Complement, where each bit is flipped, and then add 1. For example, `7 = 11111001`
+
+The last 1 is used to represent a negative number. The reason for this is that doing so makes subtraction easier.
+
+### Lowbit
+
+Return the lowest bit 1 of a number with the trailing 0s. For example, `lowbit(6) = 2`, `lowbit(7) = 1`, as `6 = 110`, `7 = 111`.
+
+- `-x = ~x + 1`. Because the negative number is the complement of the positive number plus 1. For example, `-6 = ~6 + 1 = 110 + 1 = 111`.
+- `x & ~x = 0`. Because the complement of a number will always be not equal to the number itself. Notice in such a situation, the position where the last `1` in the original number resides, will be `0` in the complement number, and every trailing `0` will be `1`.
+- Hence, if a `1` is added to `~x`, the position where the last `1` in the original number resides, will be `1` in the complement number, and every trailing `0` will be `0`. Every bit before the position where the last `i` in the original number resides, will be the complements and thus be canceled out.
+- `lowbit(n) = n & (~n + 1) = n & -n`
+
+![](lowbit.png)
+
+## Examples
+
+### Convert to Binary
+
+```cpp
+int main() {
+    int n;
+    cin >> n;
+    while (n > 0) {
+        cout << (n & 1);
+        n >>= 1;
+    }
+    return 0;
+}
+```
+
+If using the above formula, we may also use the index of the bit. This one always returns a 32-length string.
+
+```cpp
+int main() {
+    int n;
+    cin >> n;
+    for (int i = 31; i >= 0; i--) {
+        cout << (n >> i & 1);
+    }
+    return 0;
+}
+```
+
+### Count the number of 1s
+
+```cpp
+int lowbit(int x) { return x & -x; }
+
+int main() {
+    int n;
+    cin >> n;
+    while (n--) {
+        int x;
+        cin >> x;
+
+        int result = 0;
+        while (x) x -= lowbit(x), result++;
+        cout << result << " ";
+    }
+    cout << endl;
 }
 ```
