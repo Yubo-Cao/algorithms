@@ -4,75 +4,61 @@
 
 using namespace std;
 
-const int N = 3e5 + 10;
-
-int n, m;
-int a[N], s[N];
-
-vector<int> alls;
-
 typedef pair<int, int> PII;
 
 vector<PII> add, query;
+vector<int> all;
 
-int descretize(int x) {
-    int l = 0, r = alls.size() - 1;
+const int N = 3e5 + 1;
+
+int find(vector<int> &all, int x) {
+    int l = 0, r = all.size() - 1;
     while (l < r) {
         int mid = l + r >> 1;
-        if (alls[mid] >= x)
+        if (all[mid] >= x)
             r = mid;
         else
             l = mid + 1;
     }
-    return r + 1;  // mapping to start from 1.
-}
-
-vector<int>::iterator unique(vector<int> &a) {
-    int j = 0;
-    for (int i = 0; i < a.size(); i++) {
-        if (!i || a[i] != a[i - 1])  // !i, if it is the first eleents
-            a[j++] = a[i];
-    }
-    return a.begin() + j;
+    return r + 1;
 }
 
 int main() {
+    int n, m;
     cin >> n >> m;
-    // read all number necessary
-    for (int i = 0; i < n; i++) {
+
+    while (n--) {
         int x, c;
         cin >> x >> c;
         add.push_back({x, c});
-        alls.push_back(x);
+
+        all.push_back(x);
     }
 
-    for (int i = 0; i < m; i++) {
+    while (m--) {
         int l, r;
         cin >> l >> r;
         query.push_back({l, r});
 
-        alls.push_back(l);
-        alls.push_back(r);
+        all.push_back(l);
+        all.push_back(r);
     }
 
-    // deduplicate & sort. prepare for descretize
-    sort(alls.begin(), alls.end());
-    alls.erase(unique(alls), alls.end());
+    sort(all.begin(), all.end());
+    all.erase(unique(all.begin(), all.end()), all.end());
 
-    // add
-    for (auto item : add) {
-        int x = descretize(item.first);
-        a[x] += item.second;
+    int s[N] = {0};
+
+    for (auto x : add) {
+        int i = find(all, x.first);
+        s[i] += x.second;
     }
 
-    // prefix sum
-    for (int i = 1; i <= alls.size(); i++) s[i] = s[i - 1] + a[i];
+    for (int i = 0; i < N; i++) s[i] += s[i - 1];
 
-    // query
-    for (auto item : query) {
-        int l = descretize(item.first), r = descretize(item.second);
+    for (auto x : query) {
+        int l = find(all, x.first), r = find(all, x.second);
         cout << s[r] - s[l - 1] << endl;
     }
-
     return 0;
 }
