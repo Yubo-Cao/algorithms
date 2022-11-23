@@ -173,7 +173,7 @@ The above theory is, however, useless. We probably just care about how to updat 
 
 The reason behind such a convention is to handle the situation when `l = r - 1` or `l = r`. In the first case, `mid = (l + r) / 2` will be `l`, and `mid = (l + r + 1) / 2` will be `r`. In the second case, `mid = (l + r) / 2` will be `l`, and `mid = (l + r + 1) / 2` will be `l + 1`. Hence, we can always ensure that `mid` is updated, rather than falling into an infinite loop.
 
-### Example
+### Range of Number
 
 Find the range of numbers in a sorted array. For example, given array `1 1 2 3` and the user input `1`, the program should produce `0 1`.
 
@@ -230,6 +230,8 @@ int main()
 ## Float
 
 A floating point binary search is nice: there are simply no boundary conditions. Usually, we will simply use $\\epsilon$ to determine the equality of two floating point numbers.
+
+### Square Root
 
 ```cpp
 #include <iostream>
@@ -719,5 +721,178 @@ int main() {
         cout << result << " ";
     }
     cout << endl;
+}
+```
+
+# Discretize
+
+- Discretization is a technique that maps a large range of numbers to a small range of numbers. For example, if we have numbers from `0` to `1e9`, we can map them to `0` to `1e5`, since it is impossible to create an array of size `1e9`.
+- There are some caveats:
+  - There might be duplicate numbers, so we need deduplication.
+    - First sort the array, `sort(a.begin(), a.end())`.
+    - Then `a.erase(unique(a.begin(), a.end()), a.end())` will remove all the duplicate numbers in the array `a`. `unique(a.begin(), a.end())` will move all the unique numbers to the front of the array, and return the pointer to the first duplicate number. `a.erase()` will remove all the duplicate numbers.
+  - How to properly map the numbers to the new range.
+    - A binary search can be used to find the index of the number in the new range. Find the first position that is larger than or equal to the target in the deduplicated, sorted array.
+
+```cpp
+int main() {
+    vector<int> a;
+    int n;
+    cin >> n;
+    for(int i = 0; i < n; i++) cin >> a[i];
+    sort(a.begin(), a.end());
+    a.erase(unique(a.begin(), a.end()), a.end());
+}
+
+// find the first position that is larger than or equal to the target
+int discretize(vector<int> a, int x) {
+    int l = 0, r = a.size() - 1;
+    while (l < r) {
+        int mid = l + r >> 1;
+        if (a[mid] >= x) r = mid;
+        else l = mid + 1;
+    }
+    return r + 1; // depends on the problem
+}
+```
+
+### Sum in Interval
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+const int N = 3e5 + 10;
+
+int n, m;
+int a[N], s[N];
+
+vector<int> alls;
+
+typedef pair<int, int> PII;
+
+vector<PII> add, query;
+
+int descretize(int x) {
+    int l = 0, r = alls.size() - 1;
+    while (l < r) {
+        int mid = l + r >> 1;
+        if (alls[mid] >= x)
+            r = mid;
+        else
+            l = mid + 1;
+    }
+    return r + 1;  // mapping to start from 1.
+}
+
+vector<int>::iterator unique(vector<int> &a) {
+    int j = 0;
+    for (int i = 0; i < a.size(); i++) {
+        if (!i || a[i] != a[i - 1])  // !i, if it is the first eleents
+            a[j++] = a[i];
+    }
+    return a.begin() + j;
+}
+
+int main() {
+    cin >> n >> m;
+    // read all number necessary
+    for (int i = 0; i < n; i++) {
+        int x, c;
+        cin >> x >> c;
+        add.push_back({x, c});
+        alls.push_back(x);
+    }
+
+    for (int i = 0; i < m; i++) {
+        int l, r;
+        cin >> l >> r;
+        query.push_back({l, r});
+
+        alls.push_back(l);
+        alls.push_back(r);
+    }
+
+    // deduplicate & sort. prepare for descretize
+    sort(alls.begin(), alls.end());
+    alls.erase(unique(alls), alls.end());
+
+    // add
+    for (auto item : add) {
+        int x = descretize(item.first);
+        a[x] += item.second;
+    }
+
+    // prefix sum
+    for (int i = 1; i <= alls.size(); i++) s[i] = s[i - 1] + a[i];
+
+    // query
+    for (auto item : query) {
+        int l = descretize(item.first), r = descretize(item.second);
+        cout << s[r] - s[l - 1] << endl;
+    }
+
+    return 0;
+}
+```
+
+- The above algorithm is almost the same as the prefix sum question. However, the difference is that we need to discretize the numbers first and then do the prefix sum. This makes it possible to create an array of size `1e5`, as `1e9` is too large.
+
+
+# Merge Interval
+
+Merge the intervals that overlap.
+
+- Sort the intervals according to their left boundaries.
+- Maintain 2 pointers, `l` and `r`, which point to the left and right boundaries of the current interval.
+  - Then, there are 3 situations: Contains, overlaps, or disjoints.
+    - If the current interval contains the next interval, then we do nothing.
+    - If the current interval overlaps with the next interval, then we update the right boundary of the current interval.
+    - If the current interval is disjoint with the next interval, then we push the current interval into the result vector and update the left and right boundaries to be the next interval.
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+typedef pair<int, int> PII;
+
+vector<PII> intervals, results;
+
+int main() {
+    int n;
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        int l, r;
+        cin >> l >> r;
+        intervals.push_back({l, r});
+    }
+
+    // by default, it sorts the intervals according to the first in pair.
+    sort(intervals.begin(), intervals.end());
+
+    int l = intervals[0].first, r = intervals[0].second;
+    for (int i = 1; i < intervals.size(); i++) {
+        if (intervals[i].first <= r) {
+            r = max(r, intervals[i].second);
+        } else {
+            results.push_back({l, r});
+            l = intervals[i].first;
+            r = intervals[i].second;
+        }
+    }
+
+    results.push_back({l, r});
+
+    for (auto item : results) {
+        cout << item.first << " " << item.second << endl;
+    }
+
+    return 0;
 }
 ```
