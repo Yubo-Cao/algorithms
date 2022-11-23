@@ -426,3 +426,153 @@ vector<int> div(vector<int> &A, int b, int &r) {
 ```
 
 - Time complexity: $O(n)$
+
+# Prefix Sum & Finite Difference
+
+## Prefix Sum
+
+- Suppose we have an array $A$ of size $n$.
+- A prefix sum array $S$ of $A$ is an array of size $n + 1$ such that $S[i]$ is the sum of $A[0], A[1], \dots, A[i - 1]$.
+
+To calculate the prefix sum array $S$ of $A$, we can do it in $O(n)$ time.
+
+```cpp
+vector<int> prefix_sum(vector<int> &A) {
+    vector<int> S(A.size() + 1, 0);
+    for (int i = 1; i <= A.size(); i++) S[i] = S[i - 1] + A[i - 1];
+    return S;
+}
+```
+
+The purpose of prefix sum is to find the sum of a subarray $A[i], A[i + 1], \dots, A[j]$ in $O(1)$ time. It would be $S[j] - S[i - 1]$. We define that $S[0] = 0$, simply because this helps to handle boundary cases. **It is important to remember the idea of caching the sum of a subarray.**
+
+```cpp
+int main() {
+    scanf("%d%d", &n, &m);
+    for (int i = 1; i <= n; i++) scanf("%d", &a[i]);
+    for (int i = 1; i <= n; i++) s[i] = s[i - 1] + a[i];
+    while (m--) {
+        int l, r;
+        scanf("%d%d", &l, &r);
+        printf("%d\n", s[r] - s[l - 1]);
+    }
+    return 0;
+}
+```
+
+### 2D Prefix Sum
+
+- Suppose we have a 2D array $A$ of size $n \times m$. And we want to calculate
+the sum of a subarray $A[i][j], A[i + 1][j], \dots, A[i + k][j + l]$, we can calculate a 2D prefix sum array $S$ of $A$, where each element $S[i][j]$ is the sum of subarray $A[0][0], A[0][1], \dots, A[0][j-1], A[1][0], A[1][1], \dots, A[1][j-1], \dots, A[i-1][0], A[i-1][1], \dots, A[i-1][j-1]$.
+  - Then the sum of the subarray is $S[i + k][j + l] - S[i - 1][j + l] - S[i + k][j - 1] + S[i - 1][j - 1]$.
+
+```cpp
+int main() {
+    scanf("%d%d%d", &n, &m, &q);
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= m; j++)
+            scanf("%d", &a[i][j]);
+
+    // find the prefix sum of a
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= m; j++)
+            s[i][j] = s[i - 1][j] + s[i][j - 1] - s[i - 1][j - 1] + a[i][j];
+
+    // calculate the sum of subarray a[x1][y1] ~ a[x2][y2]
+    while (q--) {
+        int x1, y1, x2, y2;
+        scanf("%d%d%d%d", &x1, &y1, &x2, &y2);
+        printf("%d\n", s[x2][y2] - s[x1 - 1][y2] - s[x2][y1 - 1] + s[x1 - 1][y1 - 1]);
+    }
+
+    return 0;
+}
+```
+
+![](prefix-sum.png)  
+
+## Finite Difference
+
+- Suppose we have an array $A$ of size $n$.
+- A finite difference array $D$ of $A$ is an array of size $n - 1$ such that $D[i]$ is the difference between $A[i]$ and $A[i + 1]$.
+  - The formal definition, is a sequence of number $D_1, D_2, \dots, D_{n - 1}$ such that $A_n = D_1 + D_2 + \dots + D_{n - 1}$. And by previous, $D_i = A_{i + 1} - A_i$ and it thus always cancels each other out. And we call
+    - D as the finite difference array of A.
+    - And A as the prefix sum array of D.
+    - **Prefix sum array is the inverse of finite difference array.**
+- This can be used to quickly update a subarray of $A$.
+
+```cpp
+int n, m;
+int a[N], b[N];
+
+void insert(int l, int r, int c) {
+    b[l] += c;
+    b[r + 1] -= c;
+}
+
+int main() {
+    scanf("%d%d", &n, &m);
+    for (int i = 1; i <= n; i++) scanf("%d", &a[i]);
+
+    for (int i = 1; i <= n; i++) insert(i, i, a[i]);
+
+    while (m--) {
+        int l, r, c;
+        scanf("%d%d%d", &l, &r, &c);
+        insert(l, r, c);
+    }
+
+    for (int i = 1; i <= n; i++) {
+        b[i] += b[i - 1];
+        printf("%d", b[i]);
+    }
+    
+    return 0;
+}
+```
+
+- In the above code, we start with an array $A$ of size $n$, where all of them are 0. Hence, the finite difference array $D$ is also 0.
+- And then, we insert each element of $A$ into the finite difference array $D$, as if an update to construct the finite difference array $D$ from $A$.
+
+### 2D Finite Difference
+
+![](2d-prefix-sum.png)  
+
+- The above algorithm update the subarray $A[x_1][y_1] \dots A[x_2][y_2]$ by $c$.
+- So, we shall assume that the finite difference array $D$ is initialized to 0. And then we update the subarray $D[x_1][y_1] \dots D[x_2][y_2]$ by $c$.
+
+
+```cpp
+void insert(int x1, int y1, int x2, int y2, int c) {
+    b[x1][y1] += c;
+    b[x2 + 1][y1] -= c;
+    b[x1][y2 + 1] -= c;
+    b[x2 + 1][y2 + 1] -= c;
+}
+
+int main() {
+    scanf("%d%d%d", &n, &m, &q);
+
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= n; j++)
+            scanf("%d", &a[i][j]);
+
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= m; j++)
+            insert(i, j, i, j, a[i][j]);
+
+    while (q--) {
+        int x1, y1, x2, y2, c;
+        cin >> x1 >> y1 >> x2 >> y2 >> c;
+        insert(x1, y2, x2, y2, c);
+    }
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            b[i][j] += b[i][j - 1] + b[i - 1][j] - b[i - 1][j - 1];
+            printf("%d ", b[i][j]);
+        }
+        printf("\n");
+    }
+}
+```
