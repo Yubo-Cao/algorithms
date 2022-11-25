@@ -1,0 +1,36 @@
+\documentclass[border=1cm]{standalone}
+\usepackage[math]{common}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata,positioning,calc}
+
+\begin{document}
+
+\def\hb{0.1}
+\def\h{0.5}
+\def\pad{0.1}
+\def\len{4.5}
+
+\begin{tikzpicture}
+    \draw (-0.5,0) -- (7.5,0);
+    \foreach \x in {0,0.5,...,7}
+        \draw (\x,\hb) -- (\x,-\hb);
+    \node[above] at (-0.5, 0) {$0$};
+    \draw[color=theme-3] (-0.5, -\h) -- (-0.5 + \len, -\h);
+    \node[above] at (-0.5  + \len, 0) {$j$};
+    \node[above] at (7.5, 0) {$i$};
+
+    \draw[color=theme-2, dashed] (-0.5, \pad) -- (-0.5, -\h);
+    \draw[color=theme-2, dashed] (-0.5 + \len, \pad) -- (-0.5 + \len, -\h);
+    \node[below] at (\len / 2 - 0.5, -\h) {\texttt{s[0:j]}};
+
+    \draw[color=theme-3] (7.5 - \len, -\h * 2) -- (7.5, -\h * 2);
+    \node[above] at (7.5 - \len, 0) {$i - j$};
+
+    \draw[color=theme-2, dashed] (7.5 - \len, \pad) -- (7.5 - \len, -\h * 2);
+    \draw[color=theme-2, dashed] (7.5, \pad) -- (7.5, -\h * 2);
+    \node[below] at (7.5 - \len / 2, -\h * 2) {\texttt{s[i - j:i]}};
+
+    \node[above] at (7.5 / 2 - 0.5 / 2, \h) {\texttt{s[0:j] == s[i - j:i]}};
+\end{tikzpicture}
+
+\end{document}

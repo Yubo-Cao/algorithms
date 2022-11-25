@@ -4,7 +4,7 @@ using namespace std;
 
 const int N = 100010;
 
-int n, m;
+int n, bv;
 int a[N], b[N];
 
 void insert(int l, int r, int c) {
@@ -13,12 +13,12 @@ void insert(int l, int r, int c) {
 }
 
 int main() {
-    scanf("%d%d", &n, &m);
+    scanf("%d%d", &n, &bv);
     for (int i = 1; i <= n; i++) scanf("%d", &a[i]);
 
     for (int i = 1; i <= n; i++) insert(i, i, a[i]);
 
-    while (m--) {
+    while (bv--) {
         int l, r, c;
         scanf("%d%d%d", &l, &r, &c);
         insert(l, r, c);

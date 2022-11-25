@@ -6,7 +6,7 @@ Given a list of numbers, sort them in ascending/descending order.
 
 Divide and conquer.
 
-Give a sequence of numbers from the array `q`. Let the start index is `l` and the end index is `r`.
+Give a sequence of numbers from the array `q`. Let the start index is `l` and the end index be `r`.
 
 - Pick a pivot `q[l]`, `q[r]`, `q[(l+r)/2]`, or `q[random]`.
 - Partition the array into two parts, one part is smaller than or equal to the pivot, the other part is larger than or equal to the pivot. **The most difficult part**.
@@ -18,7 +18,7 @@ Give a sequence of numbers from the array `q`. Let the start index is `l` and th
 - And then iterate through the array `q`, if the number is smaller than the pivot, put it into `smaller`, otherwise put it into `larger`.
 - Finally, concatenate `smaller`, `pivot`, and `larger` (by copying the elements from `smaller` and `larger` to `q`).
 
-The above method has time complexity of $O(n)$ and space complexity of $O(n)$. Using 2 pointers to do the partitioning, can achieve better space complexity.
+The above method has a time complexity of $O(n)$ and space complexity of $O(n)$. Using 2 pointers to do the partitioning, can achieve better space complexity.
 
 ### Partition with 2 pointers
 
@@ -67,8 +67,7 @@ void qsort(int q[], int l, int r)
   - The worst case is $O(n^2)$.
 - The pivot choice is delicate. If we choose to use `j` as an argument in the recursion, then one must not use `r` as the pivot; similarly, if we choose to use `i` as an argument in the recursion, then one must not use `l` as the pivot. For example:
   - Let's assume the input is `[1, 2]`, and we choose `x = q[r]`.
-  - Then, after the first iteration, `i = 1` and `j = 1`. Nothing changed, and the loop is terminated. Then, `qsort(q, 0, 1)` and `qsort(2, 2)` is called. And one would soon realize, that`qsort(q, 0, 1)` is exactly the same as what we called initially, and infinite recursion occurs.void  qsort(int  q\[\], int  l, int  r){ if (l  >=  r) return;
-    int  x  =  q\[(l  +  r) /  2\], i  =  l  -  1, j  =  r  +  1; while (i  \<  j)    { while (q\[++i\] \<  x)            ; while (q\[--j\] >  x)            ; if (i  \<  j) swap(q\[i\], q\[j\]);    } qsort(q, l, j); qsort(q, j  +  1, r);}
+  - Then, after the first iteration, `i = 1` and `j = 1`. Nothing changed, and the loop is terminated. Then, `qsort(q, 0, 1)` and `qsort(2, 2)` is called. And one would soon realize, that`qsort(q, 0, 1`)` is the same as what we called initially, and infinite recursion occurs.
 - If one wants to use `i` instead of `j` in the recursion call, simply change to:
 
 ```cpp

@@ -1,0 +1,36 @@
+\documentclass[border=1cm]{standalone}
+\usepackage[math]{common}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata,positioning,calc}
+
+\begin{document}
+
+\def\hb{0.1}
+\def\h{0.75}
+\def\w{1}
+
+\begin{tikzpicture}
+    \draw (-0.5,0) -- (7.5,0);
+    \foreach \x in {0,...,7}
+        \draw (\x,\hb) -- (\x,-\hb);
+    
+    \coordinate (i) at (1,0);
+    \draw (i){}++(0,\hb) node[above]{$st$};
+
+    \coordinate (j) at (3,0);
+    \draw (j){}++(0,\hb) node[above]{$i-1$};
+
+    \node[above] at ($ (i)!0.5!(j) $) {match};
+    \draw[color=theme-3] ($ (i) + (0,-\h) $) -- ($ (j) + (\w + 0.5,-\h) $);
+    \draw[color=theme-3] (j){}++(0,\hb) -- ++(0,-\hb - \h);
+
+    \draw (j){}++(\w,0) circle (\hb);
+    \draw[color=theme-3] ($ (j) + (\w,-\h) $) circle (0.1);
+    \draw (j){}++(\w,-\h / 2) node{fail};
+
+    \draw (j)++(\w,\hb) node[above]{$i$};
+    \draw (j)++(\w,-\h) node[below]{\color{theme-3} $j + 1$};
+    \draw (j)++(0,-\h) node[below]{\color{theme-3} $j$};
+\end{tikzpicture}       
+
+\end{document}
