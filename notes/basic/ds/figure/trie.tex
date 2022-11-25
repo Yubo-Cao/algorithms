@@ -1,0 +1,44 @@
+\documentclass[border=1cm]{standalone}
+\usepackage[tikz]{common}
+\usetikzlibrary{trees}
+
+\begin{document}
+
+\def\sz{0.5cm}
+\begin{tikzpicture}[
+        level 1/.style = {theme-3},
+        level 2/.style = {theme-2},
+        level 3/.style = {theme-1},
+        grow = right,
+        every node/.append style = {draw, circle, minimum width = \sz, minimum height = \sz, text width=\sz / 2, inner sep=0pt, align=center, execute at begin node={\ttfamily\footnotesize}},
+        end/.style = {execute at begin node = {{\tiny\color{theme-3} end}\\\vspace{-\baselineskip}\vspace{0.75em} }},
+        sloped
+    ]
+
+    \node[draw, rectangle, color=theme-3, text width = 1cm] {root}
+    child { node {c}
+            child { node {d}
+                    child { node {e}
+                            child { node[end] {f} } }}}
+    child { node {b}
+            child { node {c}
+                    child { node {d}
+                            child { node[end] {f} }}}}
+    child { node {a}
+            child { node {n}
+                    child { node {i}
+                            child { node {s}
+                                    child {node[end] {h}} }}}
+            child {node {b}
+                    child {node {d}
+                            child{ node {e}
+                                    child { node[end] {f} }}}
+                    child {node[end] {c}
+                            child { node {e}
+                                    child { node[end] {d} }}
+                            child {node {d}
+                                    child{ node {e}
+                                            child { node[end] {f} } }}}}};
+
+\end{tikzpicture}
+\end{document}
