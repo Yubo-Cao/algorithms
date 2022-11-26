@@ -1,0 +1,29 @@
+\documentclass[border=1cm]{standalone}
+\usepackage{tikz}
+\usepackage{xparse, ifthen}
+\usetikzlibrary{patterns,snakes,positioning,calc}
+
+\begin{document}
+
+\def\b{0}
+\def\e{7}
+\NewDocumentCommand{\tick}{m m}{\draw (#1,0)++(0,0.1) node[above]{#2} -- ++(0,-0.2);}
+\NewDocumentCommand{\br}{m m O{} O{0.1cm}}{\draw[decoration={brace,mirror,raise=#4},decorate] (#1,0) -- (#2,0) node [pos=0.5,anchor=north,yshift=-#4 - 0.05cm] {\footnotesize #3};}
+
+\begin{tikzpicture}
+    \coordinate (begin) at (\b,0);
+    \coordinate (end) at (\e,0);
+    \draw (begin) -- (end);
+
+    \tick{\e}{$n$}
+    \tick{\b}{$0$}
+    \tick{3.0}{$l - 1$}
+    \tick{3.5}{$l$}
+    \tick{5.0}{$r$}
+
+    \br{\b}{3.0}[\texttt{h[l-1]}]
+    \br{3.5}{5.0}[\texttt{h[r] - h[l]$\times p^{r - l + 1}$}]
+    \br{\b}{5.0}[\texttt{h[r]}][0.6cm]
+\end{tikzpicture}
+
+\end{document}

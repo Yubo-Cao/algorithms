@@ -7,7 +7,7 @@ const int N = 100003;
 int h[N], e[N], ne[N], idx;
 
 int ha(int x) {
-    return (x % N + N) % N;  // in C++, the mod of a negative number is negative.
+    return (x % N + N) % N;  // in C++, the mod of a negative number is negative. e.g., -10 % 3 = -1
 }
 
 void insert(int x) {

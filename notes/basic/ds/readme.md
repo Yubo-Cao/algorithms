@@ -901,8 +901,7 @@ int main() {
 
 - Hashtable is a data structure that maps keys to values for highly efficient lookup.
   - Similar to discretization. We can map a large range of values to a small range of values.
-  - We can also make some associations between keys and values.
-- It provides a following functions:
+  - We can also make some associations between keys and values. It provides the following functions:
   - `insert(key, value)`: insert a key-value pair into the hashtable.
   - `search(key)`: search the value corresponding to a key.
   - `contains(key)`: check if the key is in the hashtable.
@@ -910,10 +909,104 @@ int main() {
 ### Hash Function
 
 - A hash function is a function that can map a large range of values to a small range of values.
-  - Hash function for integer can be mod operation.
-    - We usually use the prime number that is as close as possible to the size of the hashtable, yet as far as possible from 2th power.
+  - The hash function for integers can be a mod operation.
+    - We usually use the prime number that is as close as possible to the size of the hashtable, yet as far as possible from the 2nd power.
   - There is a probability that 2 different keys will be mapped to the same value. In such a situation, a **collision** occurs. Depending on the implementation, the collision may be resolved in different ways---separate chaining, open addressing, etc.
 
+#### String Hashing
+
+- Treat a string as a `p`-based number. Then, it's hash value can be calculated as the decimal representation mod some number `q`, to mapping it into some number in `[0, q)`
+- For example, assuming that `p = 26` and we want to hash the string `anish`.
+  - Then 
+  $$
+  \begin{aligned}
+  1 p^4 + 14 p^3 + 9 p^2 + 8 p^1 + 8 p^0 &= 1 \times 26^4 + 14 \times 26^3 + 9 \times 26^2 + 8 \times 26^1 + 8 \times 26^0\\
+  &= 1 \times 456976 + 14 \times 17576 + 9 \times 676 + 8 \times 26 + 8 \times 1\\
+  &= 456976 + 52632 + 6024 + 208 + 8\\
+  &= \boxed{512338}
+  \end{aligned}
+  $$
+  - Let's perform the mod operation: `512338 % 1000000007 = 512338`
+- Some caveats
+  - No letter should be mapped to `0`. For example, if we use `p = 26`, then we should map `a` to `1`, `b` to `2`, ..., `z` to `26`. If we map `a` to `0`, then the string `aa` will be mapped to `0`, which lead to a collision.
+  - We are not expecting any kind of collection in this algorithm. Empirically, the following values are used
+    $$
+        \left\{\begin{aligned}
+            p &= 131\\
+            q &= 2^{64}\\
+        \end{aligned}\right.
+    $$
+
+    and 
+
+    $$
+        \left\{\begin{aligned}
+            p &= 13331\\
+            q &= 2^{64}\\   
+        \end{aligned}\right.
+    $$
+- Benefits
+  - If we know prefix hash values, we can calculate the hash value of a substring in constant time.
+  - ![](prefix_hash.png)
+  - Since we use `q = 2^64`, we can even be lazy and simply declare the return type to be unsigned long long. When it overflows, it will automatically wrap around. 
+  - **In short, if we need to determine if 2 substrings are equal, we can use this algorithm.** (notice we need to assume that the hash function for those strings simply doesn't collide)
+
+
+```cpp
+#include <algorithm>
+#include <iostream>
+
+using namespace std;
+
+typedef unsigned long long ULL;
+
+const int N = 1e6 + 10;
+const int P = 131;
+
+ULL pow_cache[N];
+
+ULL pow(ULL b) {
+    if (pow_cache[b]) return pow_cache[b];
+
+    ULL result = 1, p = P, n = b;
+    while(n) {
+        if (n & 1) result *= p;
+        p *= p;
+        n >>= 1;
+    }
+    return pow_cache[b] = result;
+}
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+
+    int n, m;
+    cin >> n >> m;
+
+    string s;
+    cin >> s;
+
+    ULL h[n + 1] = {0};
+    for (int i = 1; i <= n; i++) {
+        // don't forgot -1
+        h[i] = h[i - 1] * P + (s[i - 1] - '0' + 1);
+    }
+
+    while (m--) {
+        int l1, r1, l2, r2;
+        cin >> l1 >> r1 >> l2 >> r2;
+
+        // inclusive for l1, l2.
+        ULL h1 = h[r1] - h[l1 - 1] * pow(r1 - l1 + 1),
+            h2 = h[r2] - h[l2 - 1] * pow(r2 - l2 + 1);
+
+        cout << ((h1 == h2) ? "Yes" : "No") << endl;
+    }
+    return 0;
+}
+```
+
+- The above problem may as well be solved by using KMP. However, the above algorithm is easier to implement and understand.
 ### Separate Chaining
 
 - Separate chaining is a collision resolution method that uses a linked list to store the elements that have the same hash value.
@@ -926,9 +1019,617 @@ int main() {
 
 
 ```cpp
+#include <cstring>
+#include <iostream>
 
+using namespace std;
 
+const int N = 100003;
+int h[N], e[N], ne[N], idx;
 
+int ha(int x) {
+    return (x % N + N) % N;  // in C++, the mod of a negative number is negative. e.g., -10 % 3 = -1
+}
+
+void insert(int x) {
+    // hash function
+    int k = ha(x);
+    e[idx] = x, ne[idx] = h[k], h[k] = idx++;
+}
+
+bool find(int x) {
+    int k = ha(x);
+    for (int i = h[k]; i != -1; i = ne[i])
+        if (e[i] == x) return true;
+    return false;
+}
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+
+    memset(h, -1, sizeof h);
+
+    int n; cin >> n;
+    string op; int x;
+    while (n--) {
+        cin >> op >> x;
+        if (op == "I") insert(x);
+        else cout << (find(x) ? "Yes" : "No") << endl;
+    }
+    return 0;
+}
+```
+
+- In the above code, the `h` array should be considered as an array of heads of the linked list (i.e., the index of the first element in the linked list). The `e` and `ne`, on the other hand, are the elements and the next pointers of the linked list.
+
+### Open Addressing
+
+- Only create a 1-d array to store the elements. The size of the array is usually larger than the number of elements (i.e., 2 to 3 times larger).
+- The hash function is used to find the position of the element. If the position is occupied, we put the elements in the next position; if the next position is occupied, we put the elements in the next position, and so on.
+- To find an element, we use the same hash function to find the position of the element. We would then iterate through the array to find the element, starting from the position found by the hash function, and stop when the first empty position is found or the element is found.
+
+```cpp
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+const int N = 300007;
+const int NU = 0x3f3f3f3f;
+
+int h[N];
+
+int ha(int x) {
+    return (x % N + N) % N;
+}
+
+/**
+ * Return the location of element. If not exists,
+ * return the location where the element should be inserted.
+ * 
+ * WARNING: h is full, this function will never return.
+ */
+int find(int x) {
+    int k = ha(x);
+    while (h[k] != NU && h[k] != x) {
+        k++;
+        if (k == N) k = 0;  // already reached end. cycle back.
+    }
+    return k;
+}
+
+void insert(int x) {
+    h[find(x)] = x;
+}
+
+bool contains(int x) {
+    return h[find(x)] != NU;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    memset(h, NU, sizeof h); // it sets for bytes. Hence, memset(h, NU & 0xff, sizeof h) is equivalent to memset(h, NU, sizeof h).
+
+    string op;
+    int x;
+    while (n--) {
+        cin >> op >> x;
+        if (op == "I")
+            insert(x);
+        else
+            cout << (contains(x) ? "Yes" : "No") << endl;
+    }
+
+    return 0;
+}
+
+```
 
 
 ## STL
+
+Standard Template Library (STL) is a set of C++ template classes to provide common programming data structures and functions such as lists, stacks, arrays, etc. It is a library of container classes, algorithms, and iterators. It is a generalized library and so, its components are parameterized. A C++ program can include, exclude, and modify components based on its requirement.
+
+
+### `Vector`
+
+- `vector` is a sequence container and also known as dynamic array or array list. If too much elements is inside, or too less, the container will automatically resize itself by 2th power.
+  - This is because, in operating system, the time it takes for the memory to be allocated is approximately constant, regardless of the size of memory requested. Hence, it is more beneficial to allocate more memory than less.
+  - If we allocate an array of size `n`, it usually copies `n` times during the resizing operation ($1 + 2 + 4 + 8 + \cdots + 2^{\lfloor \log_2 n \rfloor}$). Hence, the time complexity of each insertion, on average, is `O(1)`.
+
+```cpp
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    // initialize
+    vector<int> a;         // empty vector with size 0
+    vector<int> b(10);     // vector with size 10, all elements are 0
+    vector<int> c(10, 1);  // vector with size 10, all elements are 1
+
+    // iterate
+    for (auto x : a) cout << x << ' ';
+    cout << endl;  // nothing
+    for (auto x : b) cout << x << ' ';
+    cout << endl;  // a lot of 0
+    for (auto x : c) cout << x << ' ';
+    cout << endl;  // a lot of 1
+
+    // size. number of elements O(1) time complexity
+    cout << a.size() << endl;  // 0
+
+    // empty, equivalent to size == 0
+    cout << a.empty() << endl;  // 1
+
+    // clear, remove all elements
+    a.clear();
+
+    // push_back, add an element to the end of the vector
+    a.push_back(1);
+    a.push_back(2);
+
+    // front, get the first element
+    cout << a.front() << endl;  // 1
+
+    // back, get the last element
+    cout << a.back() << endl;  // 2
+
+    // pop_back, remove the last element
+    a.pop_back();
+    cout << a.back() << endl;  // 1
+
+    // begin, end, get the iterator of the first element and the last element
+    // an iterator can be treated as a pointer. end is the a[a.size()] (past 1 from end)
+    a.push_back(2);
+    for (auto it = a.begin(); it != a.end(); it++) cout << *it << ' ';
+    cout << endl;
+
+    // [] operator, get the element at the index
+    cout << a[0] << endl;  // 1
+
+    // comparison operator, compare the elements
+    cout << (a == b) << endl;  // 0, because a and b are different
+    cout << (a < b) << endl;   // 0, because 0 < 0 is false
+    cout << (b < c) << endl;   // 1, beacuse 0 < 1 is true
+}
+```
+
+### `String`
+
+- `string` is a sequence container that encapsulates dynamic size arrays. It is used to store collection of characters.
+
+```cpp
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    // initialize
+    string s;            // empty string with size 0
+    string a = "hello";  // literal string
+
+    // append
+    a += ", anish";     // a = "hello, anish"
+    a += 97;            // automatically convert int to char
+    cout << a << endl;  // hello, anisha
+
+    // size
+    cout << a.size() << endl;  // 13
+    cout << a.length() << endl;  // 13
+
+    // empty
+    cout << a.empty() << endl;  // 0
+
+    // substring, index and LENGTH, not end index
+    cout << a.substr(0, 5) << endl;  // hello
+    cout << a.substr(7) << endl;     // anisha, default to the end
+
+    // c_str
+    printf("%s\n", a.c_str());  // hello, anisha
+
+    // find
+    cout << a.find("anish") << endl;  // 7
+
+    // clear
+    a.clear();
+    cout << a << endl;  // nothing
+
+    return 0;
+}
+```
+
+### `Queue`
+
+- `queue` is a container adapter that gives the programmer the functionality of a queue - specifically, a FIFO (first-in first-out) data structure.
+
+```cpp
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+int main() {
+    // initialize
+    queue<int> q;
+
+    // push, append an element to the end of the queue
+    q.push(1);
+    q.push(2);
+
+    // front, get the first element
+    cout << q.front() << endl;  // 1
+
+    // back, get the last element
+    cout << q.back() << endl;  // 2
+
+    // pop, remove the first element
+    q.pop();
+    cout << q.front() << endl;  // 2
+
+    // size. number of elements O(1) time complexity
+    cout << q.size() << endl;  // 1
+
+    // empty, equivalent to size == 0
+    cout << q.empty() << endl;  // 0
+
+    // queue does not have clear, however, we can clear them by recreating 1.
+    q = queue<int>();
+    cout << q.empty() << endl;  // 1
+    
+    return 0;
+}
+```
+
+### `Priority Queue` / `Heap`
+
+- allows for fast retrieval of the largest (by default) element in a set and fast insertion of new elements.
+
+```cpp
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+int main() {
+    // initialize. by default, it's a max heap
+    priority_queue<int> q;
+    // make a min heap. one may as well simply insert negative numbers, to use a
+    // max heap as a min heap.
+    priority_queue<int, vector<int>, greater<int>> q2;
+
+    // push, append an element to the end of the queue
+    q.push(1);
+    q.push(2);
+
+    // top, get the first element
+    cout << q.top() << endl;  // 2
+
+    // pop, remove the first element
+    q.pop();
+
+    return 0;
+}
+```
+
+### `Stack`
+
+- `stack` is a container adapter that gives the programmer the functionality of a stack - specifically, a LIFO (last-in first-out) data structure.
+
+```cpp
+#include <iostream>
+#include <stack>
+
+using namespace std;
+
+int main() {
+    // initialize
+    stack<int> s;
+
+    // push, append an element to the end of the stack
+    s.push(1);
+    s.push(2);
+
+    // top, get the last element
+    cout << s.top() << endl;  // 2
+
+    // pop, remove the last element
+    s.pop();
+
+    // size. number of elements O(1) time complexity
+    cout << s.size() << endl;  // 1
+
+    // empty, equivalent to size == 0
+    cout << s.empty() << endl;  // 0
+
+    return 0;
+}
+```
+
+### `Deque`
+
+- `deque` is a double-ended queue. It allows fast insertion and deletion at both its beginning and its end.
+  - It is signficantly slower than `vector` and `string` for accessing elements in the middle. Hence, it is usually suggested to avoid using `deque`.
+
+```cpp
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+template <typename T>
+ostream &operator<<(ostream &os, const deque<T> &d) {
+    os << "[";
+    for (int i = 0; i < d.size(); i++) {
+        os << d[i];
+        if (i != d.size() - 1) os << ", ";
+    }
+    os << "]";
+    return os;
+}
+
+int main() {
+    // intiailize
+    deque<int> d;
+
+    // size
+    cout << d.size() << endl;  // 0
+
+    // empty
+    cout << d.empty() << endl;  // 1
+
+    // clear
+    d.clear();
+    cout << d.empty() << endl;  // 1
+
+    // push_back, append an element to the end of the deque
+    d.push_back(1);
+    d.push_back(2);
+
+    // push_front, append an element to the front of the deque
+    d.push_front(3);
+    d.push_front(4);
+
+    cout << d << endl;  // [4, 3, 1, 2]
+
+    // front, get the first element
+    cout << d.front() << endl;  // 4
+
+    // back, get the last element
+    cout << d.back() << endl;  // 2
+
+    // pop_front, remove the first element
+    d.pop_front();
+    cout << d << endl;  // [3, 1, 2]
+
+    // pop_back, remove the last element
+    d.pop_back();
+    cout << d << endl;  // [3, 1]
+
+    // random access
+    cout << d[0] << endl;     // 3
+    cout << d.at(1) << endl;  // 1
+
+    return 0;
+}
+```
+
+
+### `Set`, `Map`, `Multiset`, `Multimap`
+
+- `set` is a container that stores unique elements following a specific order. `map` is a container that stores elements in a mapped fashion. Each element has a key value and a mapped value. No two mapped values can have same key values. `multiset` and `multimap` are similar to set and map except that multiple elements can have same key values.
+  - Implemented with balanced-binary tree `RB-tree` (Red-Black Tree) or `AVL-tree` (Adelson-Velskii and Landis Tree).
+  - Hence, the time complexity is all $O(\log n)$.
+
+```cpp
+#include <iostream>
+#include <set>
+
+using namespace std;
+
+template <typename T>
+ostream &operator<<(ostream &os, const set<T> &s) {
+    os << "{";
+    for (auto it = s.begin(); it != s.end(); it++) {
+        os << *it;
+        if (next(it) != s.end()) os << ", ";
+    }
+    os << "}";
+    return os;
+}
+
+int main() {
+    // initialize
+    set<int> s;
+
+    // insert
+    s.insert(1);
+    s.insert(2);
+    s.insert(1);        // duplicate element will be ignored
+    cout << s << endl;  // {1, 2}
+
+    // size
+    cout << s.size() << endl;  // 2
+
+    // find. O(logn) time complexity
+    // returns the iterator to the element if found, otherwise returns end()
+    cout << *s.find(1) << endl;  // 1
+    cout << *s.find(3) << endl;  // 2
+    cout << *s.find(2) << endl;  // 2
+
+    s.insert(3);
+    s.insert(4);
+    s.insert(5);
+    cout << s << endl;  // {1, 2, 3, 4, 5}
+
+    for (auto it = s.find(3); it != s.end(); it++) {
+        cout << *it;
+        if (next(it) != s.end()) cout << ", ";
+    }
+    cout << "}" << endl;  // 3, 4, 5}
+
+    // erase all matching elements
+    s.erase(3);
+    cout << s << endl;  // {1, 2, 4, 5}
+    // pass an iterator to erase. it would erase all elements in the iterator
+    s.erase(s.find(4));
+    cout << s << endl;  // {1, 2, 5}
+
+    // lower_bound, returns the first element that is not less than the given
+    // element. O(logn) time complexity
+    cout << *s.lower_bound(2) << endl;  // 2
+    cout << *s.lower_bound(3) << endl;  // 5
+
+    // upper_bound, returns the first element that is greater than the given
+    // element. O(logn) time complexity
+    cout << *s.upper_bound(1) << endl;  // 2
+    cout << *s.upper_bound(3) << endl;  // 5
+
+    return 0;
+}
+```
+
+```cpp
+#include <iostream>
+#include <map>
+
+using namespace std;
+
+template <typename T, typename U>
+ostream &operator<<(ostream &os, const map<T, U> &m) {
+    os << "{";
+    for (auto it = m.begin(); it != m.end(); it++) {
+        os << it->first << ": " << it->second;
+        if (next(it) != m.end()) os << ", ";
+    }
+    os << "}";
+    return os;
+}
+
+template <typename T, typename U>
+ostream &operator<<(ostream &os, const pair<T, U> &p) {
+    os << "(" << p.first << ", " << p.second << ")";
+    return os;
+}
+
+int main() {
+    // initialize
+    map<int, int> m;
+
+    // insert
+    m.insert({1, 2});   // insert a pair
+    m[2] = 3;           // equivalent to m.insert({2, 3});
+    m[1] = 4;           // duplicate key will overwrite the value
+    cout << m << endl;  // {1: 4, 2: 3}
+
+    // size
+    cout << m.size() << endl;  // 2
+
+    // find. O(logn) time complexity
+    cout << *m.find(1) << endl;  // (1, 4)
+    cout << *m.find(3) << endl;  // (2, 0). return end iterator
+    cout << *m.find(2) << endl;  // (2, 3)
+
+    // erase all matching elements
+    m.erase(2);
+    cout << m << endl;  // {1: 4}
+
+    // upper & lower bound
+    m[2] = 3;
+    m[3] = 4;
+    cout << m << endl;                  // {1: 4, 2: 3, 3: 4}
+    cout << *m.lower_bound(1) << endl;  // (1, 4)
+    cout << *m.upper_bound(1) << endl;  // (2, 3)
+    return 0;
+}
+```
+
+### `unordered_set`, `unordered_map`, `unordered_multiset`, `unordered_multimap`
+
+- Implemented with hash table.
+- This has $O(1)$ time complexity for all it's operations. However, because it it is not sorted inside, `lower_bound`, `upper_bound` won't be supported, and the iteration order would be random.
+
+### `Bitset`
+
+- Implemented with bit compression. Since `bool` is stored as a `byte` in C++, this data structure stores 8 `boolean` value using a `byte`, achieving a 8 time reduction in the memory consumption. 
+- Treat it as a big boolean array.
+
+```cpp
+#include <bitset>
+#include <iostream>
+
+using namespace std;
+
+template <size_t N>
+ostream& operator<<(ostream& os, const bitset<N>& bs) {
+    os << "[";
+    for (size_t i = 0; i < N; ++i) {
+        os << bs[i];
+        if (i < N - 1) os << ", ";
+    }
+    os << "]";
+    return os;
+}
+
+int main() {
+    // initialize
+    bitset<5> s;                // generic type is used as size of set.
+    cout << s << endl;          // [0, 0, 0, 0, 0]
+    cout << ~s << endl;         // [1, 1, 1, 1, 1]
+    s[0] = 1;                   // set 0th bit
+    cout << (s << 1) << endl;   // [0, 1, 0, 0, 0]
+    cout << (s >> 1) << endl;   // [0, 0, 0, 0, 0]
+    cout << (s << 2) << endl;   // [0, 0, 1, 0, 0]
+    cout << s.count() << endl;  // 1, number of 1
+    cout << s.size() << endl;   // 5, size of set
+    cout << s.test(0) << endl;  // 1, test 0th bit
+    cout << s.any() << endl;    // 1, any bit is 1
+    s.reset();                  // reset all to 0
+    cout << s << endl;          // [0, 0, 0, 0, 0]
+    cout << s.none() << endl;   // 1, test if all bits are 0
+    s.flip();                   // flip all bits
+    cout << s << endl;          // [1, 1, 1, 1, 1]
+    s.set(0, 0);                // 0 is set to 0
+    cout << s << endl;          // [0, 1, 1, 1, 1]
+    return 0;
+}
+```
+
+### `Pair`
+
+- `pair` is a simple container defined in header file utility consisting of two data elements or objects.
+
+```cpp
+#include <iostream>
+
+using namespace std;
+
+template <typename T1, typename T2>
+ostream &operator<<(ostream &os, const pair<T1, T2> &p) {
+    os << "(" << p.first << ", " << p.second << ")";
+    return os;
+}
+
+int main() {
+    // initialize
+    pair<int, string> p;
+    p.first = 1, p.second = "hello";               // hand written
+    pair<int, string> p2 = make_pair(2, "world");  // make_pair
+    pair<int, string> p3(3, "yubo");               // constructor
+    pair<int, string> p4 = {4, "anish"};           // and {}
+
+    // print pair (notice that's because our meta programming)
+    cout << p << " " << p2 << " " << p3 << " " << p4 << endl;
+
+    // pair support comparison operator. it compares the first element first,
+    // then the second element, in dictionary order.
+    cout << (p < p2) << endl;   // 1
+    cout << (p3 < p2) << endl;  // 0
+
+    // pair can store arbitary number of elements, if you nest them.
+    pair<int, pair<int, int>> p5 = {1, {2, 3}};
+    cout << p5 << endl;  // (1, (2, 3))
+}
+```
