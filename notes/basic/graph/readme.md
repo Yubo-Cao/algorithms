@@ -242,7 +242,7 @@ int main() {
 ### Adjacency Matrix
 
 - Store the graph in a $n \times n$ matrix.
-- Usually not used in practice, because it is not space-efficient, especially for the sparse graph. Further, it does not support the storage of multiple edges.
+- Usually not used in practice, because it is not space-efficient, especially for the sparse graph. Further, it does not support the storage of multiple edges. Use when **the graph is dense**.
 
 ```cpp
 #include <iostream>
@@ -286,7 +286,7 @@ can be stored as
 }
 ```
 
-- The space complexity is $O(m)$, where $m$ is the number of edges. When we need to insert a new edge, we can do it in $O(1)$ time, by inserting at the head of the linked list. The expense is that we need to traverse the linked list to find the edge.
+- The space complexity is $O(m)$, where $m$ is the number of edges. When we need to insert a new edge, we can do it in $O(1)$ time, by inserting it at the head of the linked list. The expense is that we need to traverse the linked list to find the edge. Use when the graph is **sparse**.
 
 ```cpp
 #include <cstring>
@@ -510,16 +510,39 @@ int main() {
 
 ## Shortest Path
 
+### Choice of Algorithm
+
 - In the following discussion, we will say $n$ is the number of nodes, and $m$ is the number of edges.
 - There are different types of shortest paths:
   - Single source
     - The shortest path from a single node to another single node.
     - If all weights are positive, then we can use **plain Dijkstra's algorithm** ($O(N^2)$) or **heap-based Dijkstra's algorithm** ($O(m\log m)$).
       - Hence, the plain Dijkstra is better for dense graphs (when $n \le 10^5$), and the heap-based Dijkstra is better for sparse graphs (when $m \ge 10^5$).
+      - A dense graph is defined as a graph where $m \sim n^2$, and a sparse graph is defined as a graph where $m \sim n$. It's just how many edges there are compared to the number of nodes.
     - If some weights are negative, then we can use the **Bellman-Ford algorithm** ($O(mn)$) and **SPFA algorithm** (average: $O(m)$, worst: $O(mn)$).
-      - SPFA won't work if there is an upper bound on the number of edges. For majority of the problems, SPFA is better than Bellman-Ford.
+      - SPFA won't work if there is an upper bound on the number of edges. For the majority of the problems, SPFA is better than Bellman-Ford.
   - Multiple sources
     - The shortest path from multiple nodes to another single node.
     - We can use the **Floyd-Warshall algorithm** ($O(n^3)$).
+- The main difficulty of shortest path problems is to abstract the problem into a graph. Why the algorithm works and the proof is, however, negligible.
 
-### Dijkstra
+### Plain Dijkstra's Algorithm
+
+The plain Dijkstra's algorithm is greedy. It is used to find the shortest path from a single node to all other nodes.
+
+The procedure is as follows:
+1. Initialize `dst[1]` to 0, and all other `dst[i]` to infinity, or `INT_MAX`.
+2. Let the node that has already been visited by `S` (i.e., the shortest distance has already been determined) and the node that has not been visited by `U`.
+3. For each node in `U`, find the node with the minimum distance, and add it to `S`. 
+4. Use this node to update the distance of all the nodes in `U`.  Basically, just see if the distance of the current node plus the distance from the current node to the neighbor is smaller than the current distance of the neighbor. If so, update it.
+5. After `S` contains all the nodes, we can determine the shortest distance from the source node to all other nodes.
+
+
+
+### Heap-based Dijkstra's Algorithm
+
+### Bellman-Ford Algorithm
+
+### SPFA Algorithm
+
+### Floyd-Warshall Algorithm
