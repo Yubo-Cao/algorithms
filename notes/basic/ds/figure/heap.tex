@@ -1,0 +1,13 @@
+\documentclass{standalone}
+\usepackage{tikz}
+
+\begin{document}
+\def\sz{1cm}
+
+% draw array, with a sequence of boxes
+\begin{tikzpicture}
+    \foreach \x in {0,1,...,7}
+        \node[draw, rectangle, minimum width=\sz, minimum height=\sz] (a\x) at (\x * \sz,0) {$\x$};
+    \node[above] at (a0) {root};
+\end{tikzpicture}
+\end{document}

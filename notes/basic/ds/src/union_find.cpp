@@ -2,23 +2,54 @@
 
 using namespace std;
 
-const int N = 1e6 + 10;
-
-int find(int p[], int x) {  // return the root node for x, with path compression.
-    if (p[x] != x) p[x] = find(p, p[x]);
-    return p[x];
+int find(int p[], int x)
+{
+    int r = x;
+    while (p[r] != r)
+        r = p[r];
+    while (p[x] != x)
+    {
+        int y = p[x];
+        p[x] = r;
+        x = y;
+    }
+    return r;
 }
 
-int main() {
-    ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+int find_recursion(int p[], int x){
+    if (p[x] == x) return x;
+    else return p[x] = find_recursion(p, p[x]);
+}
 
+int main()
+{
     int n, m;
     cin >> n >> m;
 
     int p[n];
-    for (int i = 0; i < n; i++) p[i] = i;
+    for (int i = 0; i <= n; i++)
+        p[i] = i;
 
-    while (m--) {
+    while (m--)
+    {
+        char op;
+        int a, b;
+        cin >> op >> a >> b;
+
+        switch (op)
+        {
+        case 'M':
+            p[find(p, a)] = find(p, b);
+            break;
+        case 'Q':
+            if (find(p, a) == find(p, b))
+                cout << "Yes" << endl;
+            else
+                cout << "No" << endl;
+            break;
+        default:
+            cout << "ERROR" << endl;
+        }
     }
 
     return 0;
