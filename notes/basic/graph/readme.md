@@ -507,3 +507,19 @@ int main() {
     return 0;
 }
 ```
+
+## Shortest Path
+
+- In the following discussion, we will say $n$ is the number of nodes, and $m$ is the number of edges.
+- There are different types of shortest paths:
+  - Single source
+    - The shortest path from a single node to another single node.
+    - If all weights are positive, then we can use **plain Dijkstra's algorithm** ($O(N^2)$) or **heap-based Dijkstra's algorithm** ($O(m\log m)$).
+      - Hence, the plain Dijkstra is better for dense graphs (when $n \le 10^5$), and the heap-based Dijkstra is better for sparse graphs (when $m \ge 10^5$).
+    - If some weights are negative, then we can use the **Bellman-Ford algorithm** ($O(mn)$) and **SPFA algorithm** (average: $O(m)$, worst: $O(mn)$).
+      - SPFA won't work if there is an upper bound on the number of edges. For majority of the problems, SPFA is better than Bellman-Ford.
+  - Multiple sources
+    - The shortest path from multiple nodes to another single node.
+    - We can use the **Floyd-Warshall algorithm** ($O(n^3)$).
+
+### Dijkstra
