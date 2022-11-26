@@ -179,7 +179,7 @@ int main() {
 
 #### Maze
 
-Walk through the maze from the start point at (0,0) to the endpoint at (n-1, m-1).
+Walk through the maze from the start point at (0,0) to the endpoint at (n-1, m-1). If one wants to store the path from the start point to the endpoint, we can use a `pre` array to store the previous node of each node. Then we can use the `pre` array to get the path.
 
 
 ```cpp
@@ -232,6 +232,278 @@ int main() {
 }
 ```
 
+## Storage
+
+- The tree is a special graph, which has no cycle.
+- Therefore, we shall store the tree in the same manner as the graph.
+- An undirected graph is a special case of a directed graph. Hence, we can store the undirected graph in the same manner as the **directed graph**.
+
+
+### Adjacency Matrix
+
+- Store the graph in a $n \times n$ matrix.
+- Usually not used in practice, because it is not space-efficient, especially for the sparse graph. Further, it does not support the storage of multiple edges.
+
+```cpp
+#include <iostream>
+
+using namespace std;
+
+int graph[10][10]; // number can be weight, or 0/1 indicate whether there is an edge
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+
+    for (int i = 0; i < m; i++) {
+        int a, b;
+        cin >> a >> b;
+        // there is an edge from a to b
+        graph[a][b] = graph[b][a] = 1;
+    }
+
+    return 0;
+}
+```
+
+
+### Adjacency List
+
+- An array of linked lists' heads is called the **adjacency list**.
+
+For example, the following graph
+
+![](figure/graph.png)
+
+can be stored as
+
+```cpp
+{
+    1: 3 -> 4 -> NULL,
+    2: 1 -> 4 -> NULL,
+    3: 4 -> NULL,
+    4 -> NULL
+}
+```
+
+- The space complexity is $O(m)$, where $m$ is the number of edges. When we need to insert a new edge, we can do it in $O(1)$ time, by inserting at the head of the linked list. The expense is that we need to traverse the linked list to find the edge.
+
+```cpp
+#include <cstring>
+#include <iostream>
+
+using namespace std;
+
+const int N = 1e6 + 10;
+const int M = N * 2;
+
+// 2 edges. hence, N * 2 elements in the linked list
+int h[N], e[M], ne[M], idx;  // one may use vector to store as well. However, that's slow.
+
+void add(int a, int b) {
+    e[idx] = b;
+    ne[idx] = h[a];
+    h[a] = idx++;
+}
+
+void add_undirection(int a, int b) {
+    add(a, b);
+    add(b, a);
+}
+
+void remove(int a, int b) {
+    int i = h[a];
+    while (i != -1) {
+        if (e[i] == b) {
+            ne[i] = ne[ne[i]];
+            break;
+        }
+        i = ne[i];
+    }
+}
+
+void remove_undirection(int a, int b) {
+    remove(a, b);
+    remove(b, a);
+}
+
+int main() {
+    // necessary init
+    memset(h, -1, sizeof h);
+    return 0;
+}
+```
+
 ## Depth-first & Breath-first Iteration
 
-## Topological sort
+### Depth-first Iteration
+
+- It will iterate as many children as possible and then go back to the parent node. In each iteration, it will mark a node as visited, because, in the graph, there may be cycles.
+
+```cpp
+bool seen[N];
+
+// memset(seen, 0, sizeof seen); (don't forgot!)
+void dfs(int u) {
+    seen[u] = true;
+    for (int i = h[u]; i != -1; i = ne[i]) {  // iterate all the neighbors of u
+        int j = e[i];
+        if (!seen[j]) {  // if the neighbor is not visited
+            dfs(j);      // visit it
+        }
+    }
+}
+```
+
+### Breath-first Iteration
+
+- It will iterate the nodes layer by layer. In each iteration, it will mark a node as visited, because, in the graph, there may be cycles.
+
+```cpp
+bool seen[N];
+
+void bfs(int u) {
+    memset(seen, 0, sizeof seen);
+    queue<int> q;  // queue to store the nodes to be visited
+    q.push(u);     // push the starting node
+    seen[u] = true;
+    while (!q.empty()) {
+        int t = q.front();
+        q.pop();
+        for (int i = h[t]; i != -1; i = ne[i]) {  // iterate all the neighbors of t
+            int j = e[i];
+            if (!seen[j]) {
+                q.push(j);
+                seen[j] = true;
+            }
+        }
+    }
+}
+```
+
+### Example
+
+#### The gravity center of a tree
+
+```cpp
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+const int N = 1e6 + 10;
+const int M = N << 1;
+
+int n;
+int h[N], e[M], ne[M], idx;
+bool st[N];
+
+int ans = N;
+
+void add(int a, int b) {
+    e[idx] = b;
+    ne[idx] = h[a];
+    h[a] = idx++;
+}
+
+// the number of nodes in the u as a root
+int dfs(int u) {
+    st[u] = true;
+
+    int sum = 1, res = 0;
+    for (int i = h[u]; i != -1; i = ne[i]) {
+        int j = e[i];
+        if (!st[j]) {
+            int s = dfs(j);
+            res = max(res, s);
+            sum += s;
+        }
+    }
+
+    res = max(res, n - sum);
+    ans = min(ans, res);
+    return sum;
+}
+
+// IO
+int main() {
+    cin >> n;
+    memset(h, -1, sizeof h);
+    for (int i = 0; i < n - 1; i++) {
+        int a, b;
+        cin >> a >> b;
+        add(a, b), add(b, a);
+    }
+
+    dfs(1);
+    cout << ans << endl;
+    return 0;
+}
+```
+
+#### Topological sort
+
+- This is for a directed acyclic graph (DAG). It is a linear ordering of vertices such that for every directed edge `u -> v`, `u` comes before `v` in the ordering.
+  - If there is a cycle, then there is no topological sort. You just can't expand it in a linear order.
+- Start from a node that has no incoming edges, i.e., **in-degree** is 0. Move all that kinds of nodes into a queue. Then, BFS the graph, using the previous queue as the starting point. For each:
+  - Remove the edge from the current node to its neighbor.
+  - If the neighbor has no incoming edges, i.e., **in-degree** is 0, then add it to the queue.
+- If there is a cycle, then the queue will be empty before all the edges are removed (in below, `tt != n - 1`).
+
+```cpp
+#include <cstring>
+#include <iostream>
+
+using namespace std;
+
+const int N = 1e6 + 10;
+
+int n, m;
+int h[N], e[N], ne[N], idx;
+int q[N], d[N];
+
+void add(int a, int b) {
+    e[idx] = b;
+    ne[idx] = h[a];
+    h[a] = idx++;
+    d[b]++;
+}
+
+bool topsort() {
+    int hh = 0, tt = -1;
+    for (int i = 1; i <= n; i++)
+        if (!d[i]) q[++tt] = i;
+
+    while (hh <= tt) {
+        int t = q[hh++];
+        for (int i = h[t]; i != -1; i = ne[i]) {
+            int j = e[i];
+            d[j]--;
+            if (!d[j]) q[++tt] = j;
+        }
+    }
+
+    return tt == n - 1;  // all the points goes into the queue
+}
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+
+    memset(h, -1, sizeof h);
+
+    cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        int a, b;
+        cin >> a >> b;
+        add(a, b);
+    }
+
+    if (topsort())
+        for (int i = 0; i < n; i++) cout << q[i] << " ";
+    else
+        cout << -1;
+    cout << endl;
+
+    return 0;
+}
+```

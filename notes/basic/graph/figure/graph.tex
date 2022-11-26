@@ -1,0 +1,18 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{graphs}
+
+\begin{document}
+% draw graph with 4 elements, 1, 2, 3, 4
+% and 5 edges: 2 -> 1 2 - > 4 1 -> 3 3 -> 4 and 1 -> 4
+\def\sz{0.5cm}
+\begin{tikzpicture}[
+    every node/.style={circle, draw, minimum size=\sz, inner sep=0pt},
+]
+    \graph { 
+        1 -> {3, 4};
+        2 -> {1, 4};
+        3 -> 4;
+    };
+\end{tikzpicture}
+\end{document}
