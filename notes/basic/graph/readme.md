@@ -562,6 +562,9 @@ int dijkstra() {
                 t = j;
         st[t] = true;
 
+        // optimize
+        if (t == n) break;
+
         // update the distance
         for (int j = 1; j <= n; j++)
             dst[j] = min(dst[j], dst[t] + g[t][j]);
@@ -589,6 +592,9 @@ int main() {
 
 ### Heap-based Dijkstra's Algorithm
 
+The heap-based Dijkstra's algorithm is also greedy. It simply finding of minimum node quicker by using a heap.
+
+In the original implementation, finding min takes $n^2$ array access, put the $
 ### Bellman-Ford Algorithm
 
 ### SPFA Algorithm
