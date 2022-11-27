@@ -714,6 +714,7 @@ bool bellman_ford() {
     dst[1] = 0;
 
     for (int i = 0; i < k; i++) {
+        /* Backup the distance array before the iteration. MEMSET is quick! */
         memcpy(backup, dst, sizeof dst);
         /* because of limitation of k, there is a chance that a successive edges
            will be iterated, and more than k node's path which is shortest got
@@ -749,5 +750,85 @@ int main() {
 
 
 ### SPFA Algorithm
+
+SPFA is a variant of the Bellman-Ford algorithm. It is used to find the shortest path from a single node to all other nodes. It **does not** work on a negative cycle. However, more than $99\%$ of the graphs don't have a negative cycle and SPFA usually yields better performance than Bellman-Ford. Therefore, SPFA is usually used in practice.
+
+It works as follows:
+1. Iterate for $n$ times, where $n$ is the maximum number of nodes on the path to move from the source to the target.
+   1. Put the updated node into the queue.
+   2. Iterate edges in a BFS manner. 
+      1. Get the node from the queue (although one may use stack, priority_queue, and anything else)
+      2. Iterate all the edges from the node. Only the nodes that are updated will be put into the queue. Maintain an array `st`, which indicates whether a node is in the queue or not. If the node already exists in the queue, then don't put it into the queue again.
+      > The rough idea is, only the node whose distance get updated will lead to a update of the distance of its neighbors.
+
+```cpp
+#include <bitset>
+#include <cstring>
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+const int N = 1e5 + 10, M = 1e5 + 10, INF = 0x3f3f3f3f;
+int n, m;
+int h[N], e[M], ne[M], w[M], idx;
+int dst[N];
+bitset<N> st;
+
+void add(int a, int b, int wt) {
+    e[idx] = b;
+    w[idx] = wt;
+    ne[idx] = h[a];
+    h[a] = idx++;
+}
+
+bool spfa() {
+    memset(dst, INF & 0xff, sizeof dst);
+    dst[1] = 0;
+
+    queue<int> q;
+    q.push(1);
+    st[1] = true;
+
+    while (!q.empty()) {
+        int t = q.front();
+        q.pop();
+
+        st[t] = 0; // one may put it back again
+
+        for (int i = h[t]; i != -1; i = ne[i]) {
+            int j = e[i];
+            int alt_dst = dst[t] + w[i];
+            if (alt_dst < dst[j]) {
+                dst[j] = alt_dst;
+                if (!st[j]) q.push(j);
+                st[j] = 1;
+            }
+        }
+    }
+
+    return dst[n] <= INF / 2;
+}
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+    memset(h, -1, sizeof h);
+
+    cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        int a, b, w;
+        cin >> a >> b >> w;
+        add(a, b, w);
+    }
+
+    if (spfa())
+        cout << dst[n];
+    else
+        cout << "impossible";
+    cout << endl;
+    return 0;
+}
+```
+
 
 ### Floyd-Warshall Algorithm
