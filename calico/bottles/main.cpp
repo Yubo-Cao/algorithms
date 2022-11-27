@@ -16,7 +16,7 @@ void msort(int l, int r) {
     // record the re-ordered index
     int i = l, j = mid + 1, k = 0;
     while (i <= mid && j <= r) {
-        if (c[idx[i]] <= c[idx[j]])
+        if (c[idx[i]] < c[idx[j]])
             tmp[k++] = idx[i++];
         else
             tmp[k++] = idx[j++];
@@ -46,7 +46,6 @@ int main() {
 
         msort(1, s);
         cout << wait_time() << endl;
-        minimize_movement();
         for (int i = 1; i <= s; i++) cout << idx[i] << ' ';
         cout << endl;
     }
