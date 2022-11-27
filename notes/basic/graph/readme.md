@@ -671,6 +671,83 @@ int main() {
 
 ### Bellman-Ford Algorithm
 
+The Bellman-Ford algorithm is a dynamic programming algorithm. It is used to find the shortest path from a single node to all other nodes.
+
+It works as follows:
+1. Iterate for $n$ times
+   1. In each iteration, iterate each edge as a tuple `(a, b, w)`, representing there is an edge from `a` to `b` with weight `w`.
+   > Because of that, one may store the graph as a list of struct. Adjacent matrix and list will do the same thing.
+      1. For each edge, update the distance of `b` if `dst[a] + w < dst[b]`. If going from other nodes to `a` and then going from `a`` to `b` is shorter than the current distance of `b`, then update it.
+   2. In `k`-th iteration, the number in `dst` array represents the shortest distance from the source node to all other nodes in at most `k` edges.
+      1. Hence, in `n + 1`-th iteration, if any node's distance is updated, then there is a negative cycle in the graph.
+
+After those 2 nested loops, `dst[b] <= dst[a] + w` holds for all edges. Therefore, the shortest path from the source node to all other nodes is determined.
+
+Bellman-Ford algorithm can handle the situation when the weights of the edges are negative. However, it can't handle the situation when there is a negative cycle in the graph. 
+
+![](figure/negative_cycle.png)
+
+- In the above figure, whenever we walk around the negative cycle marked in red, the distance from 1 to 5 gets decreased by 1. Therefore, the shortest path from 1 to 5 is negative infinity. Bellman-Ford algorithm can handle this situation, as mentioned above.
+  - However, it is usually not used to find the negative cycle.
+  - Further, the existence of a negative cycle doesn't mean that the shortest path doesn't exist. It just means that for some nodes, where it necessarily goes through the negative cycle, the shortest path is negative infinity and thus doesn't exist.
+- $O(nm)$
+
+```cpp
+#include <cstring>
+#include <iostream>
+
+using namespace std;
+
+const int N = 510, M = 10010, INF = 0x3f3f3f3f;
+
+int n, m, k;
+int dst[N], backup[N];
+
+struct Edge {
+    int a;
+    int b;
+    int w;
+} edges[M];
+
+bool bellman_ford() {
+    memset(dst, INF & 0xff, sizeof dst);
+    dst[1] = 0;
+
+    for (int i = 0; i < k; i++) {
+        memcpy(backup, dst, sizeof dst);
+        /* because of limitation of k, there is a chance that a successive edges
+           will be iterated, and more than k node's path which is shortest got
+           selected. Hence, only use the result from previous step */
+        for (int j = 0; j < m; j++) {
+            Edge e = edges[j];
+            int a = e.a, b = e.b, w = e.w;
+            dst[b] = min(dst[b], backup[a] + w);
+        }
+    }
+
+    return dst[n] <= INF / 2;
+}
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+
+    cin >> n >> m >> k;
+    for (int i = 0; i < m; i++) {
+        int a, b, w;
+        cin >> a >> b >> w;
+        edges[i] = {a, b, w};
+    }
+
+    if (!bellman_ford())
+        cout << "impossible";
+    else
+        cout << dst[n];
+    cout << endl;
+    return 0;
+}
+```
+
+
 ### SPFA Algorithm
 
 ### Floyd-Warshall Algorithm
