@@ -1,8 +1,10 @@
-# Sort
+# Basic
+
+## Sort
 
 Given a list of numbers, sort them in ascending/descending order.
 
-## Quick Sort
+### Quick Sort
 
 Divide and conquer.
 
@@ -12,7 +14,7 @@ Give a sequence of numbers from the array `q`. Let the start index is `l` and th
 - Partition the array into two parts, one part is smaller than or equal to the pivot, the other part is larger than or equal to the pivot. **The most difficult part**.
 - Recursively sort the two parts.
 
-### Rudimentary Partition
+#### Rudimentary Partition
 
 - Let's create another 2 array, `smaller` and `larger`.
 - And then iterate through the array `q`, if the number is smaller than the pivot, put it into `smaller`, otherwise put it into `larger`.
@@ -20,7 +22,7 @@ Give a sequence of numbers from the array `q`. Let the start index is `l` and th
 
 The above method has a time complexity of $O(n)$ and space complexity of $O(n)$. Using 2 pointers to do the partitioning, can achieve better space complexity.
 
-### Partition with 2 pointers
+#### Partition with 2 pointers
 
 - Let's create 2 pointers, `i` and `j`.
 - Move `i` from `l` to `r`, and move `j` from `r` to `l`. Continue as long as `i` and `j` do not cross each other and `q[i] < pivot` and `q[j] > pivot`.
@@ -34,9 +36,9 @@ Just to make it make sense, let's think about it.
 - Hence, when you concatenate, they must be in the right order.
 - Unstable sorting algorithm. An algorithm is considered unstable if it does not preserve the relative order of elements with equal keys.
 
-### Example
+#### Example
 
-#### Basic Sort
+##### Basic Sort
 
 Sort a list of numbers.
 
@@ -75,12 +77,12 @@ qsort(q, l, i - 1);
 qsort(q, i, r);
 ```
 
-#### Quick Selection
+##### Quick Selection
 
 Find the $k$-th smallest number in an array.
 
 ```cpp
-#include <iostream>
+##include <iostream>
 
 using namespace std;
 
@@ -113,7 +115,7 @@ int main() {
   - The worst case is $O(n^2)$.
 - Space complexity: $O(1)$
 
-## Merge Sort
+### Merge Sort
 
 Divide and conquer. This time, we don't use a pivot, but rather, the midpoint.
 
@@ -159,9 +161,9 @@ void msort(int q[], int l, int r)
 }
 ```
 
-# Binary Split
+## Binary Split
 
-## Integer
+### Integer
 
 For a sequence of elements `E` and a target `k`. If there exists a function `f(e`)`that separates the elements into 2 continuous groups, such that`f(e)`is true for all elements in the first group, and false for all elements in the second group, then we can use binary split to find the threshold such that`f(k-Δ) != f(k+Δ)\`.
 
@@ -172,12 +174,12 @@ The above theory is, however, useless. We probably just care about how to updat 
 
 The reason behind such a convention is to handle the situation when `l = r - 1` or `l = r`. In the first case, `mid = (l + r) / 2` will be `l`, and `mid = (l + r + 1) / 2` will be `r`. In the second case, `mid = (l + r) / 2` will be `l`, and `mid = (l + r + 1) / 2` will be `l + 1`. Hence, we can always ensure that `mid` is updated, rather than falling into an infinite loop.
 
-### Range of Number
+#### Range of Number
 
 Find the range of numbers in a sorted array. For example, given array `1 1 2 3` and the user input `1`, the program should produce `0 1`.
 
 ```cpp
-#include <iostream>
+##include <iostream>
 
 using namespace std;
 
@@ -226,14 +228,14 @@ int main()
 }
 ```
 
-## Float
+### Float
 
 A floating point binary search is nice: there are simply no boundary conditions. Usually, we will simply use $\\epsilon$ to determine the equality of two floating point numbers.
 
-### Square Root
+#### Square Root
 
 ```cpp
-#include <iostream>
+##include <iostream>
 
 using namespace std;
 
@@ -256,13 +258,13 @@ int main()
 }
 ```
 
-# High Precision
+## High Precision
 
-## Storage
+### Storage
 
 To store a high-precision number, we can use an array to store the digits. For example, `12345` can be stored in big-endian as `[1, 2, 3, 4, 5]`, or in little-endian as `[5, 4, 3, 2, 1]`.
 
-## Add
+### Add
 
 Addition of 2 large integers.
 
@@ -296,7 +298,7 @@ vector<int> add(vector<int> &A, vector<int> &B) {
 
 If we want to do better, we can compress the digits into a single integer. For example, `12345` can be stored as `[123, 45]`.
 
-## Sub
+### Sub
 
 Subtraction of 2 large integers. If `A < B`, return `-sub(B, A)`.
 
@@ -351,7 +353,7 @@ int main() {
 }
 ```
 
-## Mul
+### Mul
 
 - Store digits in big-endian. Only 1 is a large number $A$, and another is a small number ($\< 100000$) $b$.
 - In each step, a temporary number $t = t\_{i - 1} + A_i \\times b$ is calculated. And then, the current digit is $t \\mod 10$ and the carry is $t \\div 10$.
@@ -401,7 +403,7 @@ vector<int> mul(vector<int> &A, vector<int> &B) {
 
 <!-- TODO: One day I will learn FFT -->
 
-## Div
+### Div
 
 We shall only consider the case where a large integer, $A$ is divided by a small integer, $b$.
 
@@ -430,9 +432,9 @@ vector<int> div(vector<int> &A, int b, int &r) {
 
 - Time complexity: $O(n)$
 
-# Prefix Sum & Finite Difference
+## Prefix Sum & Finite Difference
 
-## Prefix Sum
+### Prefix Sum
 
 - Suppose we have an array $A$ of size $n$.
 - A prefix sum array $S$ of $A$ is an array of size $n + 1$ such that $S\[i\]$ is the sum of $A\[0\], A\[1\], \\dots, A\[i - 1\]$.
@@ -463,7 +465,7 @@ int main() {
 }
 ```
 
-### 2D Prefix Sum
+#### 2D Prefix Sum
 
 - Suppose we have a 2D array $A$ of size $n \\times m$. And we want to calculate
   the sum of a subarray $A\[i\]\[j\], A\[i + 1\]\[j\], \\dots, A\[i + k\]\[j + l\]$, we can calculate a 2D prefix sum array $S$ of $A$, where each element $S\[i\]\[j\]$ is the sum of subarray $A\[0\]\[0\], A\[0\]\[1\], \\dots, A\[0\]\[j-1\], A\[1\]\[0\], A\[1\]\[1\], \\dots, A\[1\]\[j-1\], \\dots, A\[i-1\]\[0\], A\[i-1\]\[1\], \\dots, A\[i-1\]\[j-1\]$.
@@ -494,7 +496,7 @@ int main() {
 
 ![](prefix-sum.png)
 
-## Finite Difference
+### Finite Difference
 
 - Suppose we have an array $A$ of size $n$.
 - A finite difference array $D$ of $A$ is an array of size $n - 1$ such that $D\[i\]$ is the difference between $A\[i\]$ and $A\[i + 1\]$.
@@ -537,7 +539,7 @@ int main() {
 - In the above code, we start with an array $A$ of size $n$, where all of them are 0. Hence, the finite difference array $D$ is also 0.
 - And then, we insert each element of $A$ into the finite difference array $D$, as if an update to construct the finite difference array $D$ from $A$.
 
-### 2D Finite Difference
+#### 2D Finite Difference
 
 ![](2d-prefix-sum.png)
 
@@ -579,7 +581,7 @@ int main() {
 }
 ```
 
-# Two Pointer
+## Two Pointer
 
 - The two-pointer algorithm is a technique that uses two-pointers to traverse an array (or multiple).
   - In merge sort, we use two pointers that point to 2 subarrays.
@@ -596,12 +598,12 @@ for (int i = 0, j = 0; i < n; i++) {
 
 - We use 2 pointers, to compress the time complexity from $O(n^2)$ to $O(n)$.
 
-## Word Splitting
+### Word Splitting
 
 ```cpp
-#include <string.h>
+##include <string.h>
 
-#include <iostream>
+##include <iostream>
 
 using namespace std;
 
@@ -625,7 +627,7 @@ int main() {
 }
 ```
 
-## Longest Continuous Non-duplicate Subsequence
+### Longest Continuous Non-duplicate Subsequence
 
 ```cpp
 int two_pointer(int s[]) {
@@ -639,21 +641,21 @@ int two_pointer(int s[]) {
 }
 ```
 
-# Bit Manipulation
+## Bit Manipulation
 
 To convert a number to binary, we sum up the powers of 2 that are less than or equal to the number.
 
 - `n = 15 = 2^3 + 2^2 + 2^1 + 2^0 = 1111`
 
-## Common Operation
+### Common Operation
 
-### k-th bit
+#### k-th bit
 
 - Move the `k`th bit to the rightmost position: `n >> k`
 - See the last bit: `n & 1`
 - To see `k`th bit: `n >> k & 1`
 
-### Representation of numbers
+#### Representation of numbers
 
 There exist 3 types of code to represent numbers:
 
@@ -663,7 +665,7 @@ There exist 3 types of code to represent numbers:
 
 The last 1 is used to represent a negative number. The reason for this is that doing so makes subtraction easier.
 
-### Lowbit
+#### Lowbit
 
 Return the lowest bit 1 of a number with the trailing 0s. For example, `lowbit(6) = 2`, `lowbit(7) = 1`, as `6 = 110`, `7 = 111`.
 
@@ -674,9 +676,9 @@ Return the lowest bit 1 of a number with the trailing 0s. For example, `lowbit(6
 
 ![](lowbit.png)
 
-## Examples
+### Examples
 
-### Convert to Binary
+#### Convert to Binary
 
 ```cpp
 int main() {
@@ -703,7 +705,7 @@ int main() {
 }
 ```
 
-### Count the number of 1s
+#### Count the number of 1s
 
 ```cpp
 int lowbit(int x) { return x & -x; }
@@ -723,7 +725,7 @@ int main() {
 }
 ```
 
-# Discretize
+## Discretize
 
 - Discretization is a technique that maps a large range of numbers to a small range of numbers. For example, if we have numbers from `0` to `1e9`, we can map them to `0` to `1e5`, since it is impossible to create an array of size `1e9`.
 - There are some caveats:
@@ -755,12 +757,12 @@ int discretize(vector<int> a, int x) {
 }
 ```
 
-### Sum in Interval
+#### Sum in Interval
 
 ```cpp
-#include <algorithm>
-#include <iostream>
-#include <vector>
+##include <algorithm>
+##include <iostream>
+##include <vector>
 
 using namespace std;
 
@@ -841,7 +843,7 @@ int main() {
 - The above algorithm is almost the same as the prefix sum question. However, the difference is that we need to discretize the numbers first and then do the prefix sum. This makes it possible to create an array of size `1e5`, as `1e9` is too large.
 
 
-# Merge Interval
+## Merge Interval
 
 Merge the intervals that overlap.
 
@@ -853,9 +855,9 @@ Merge the intervals that overlap.
     - If the current interval is disjoint with the next interval, then we push the current interval into the result vector and update the left and right boundaries to be the next interval.
 
 ```cpp
-#include <algorithm>
-#include <iostream>
-#include <vector>
+##include <algorithm>
+##include <iostream>
+##include <vector>
 
 using namespace std;
 

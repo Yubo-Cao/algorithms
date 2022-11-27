@@ -333,3 +333,22 @@ int main() {
     return 0;
 }
 ```
+
+## Linear DP
+
+If the path in which the state transition occurs is linear, then the state transition can be optimized. For example, in the bag problem, we update the volume from small to large/large to small. If there is an approximately linear relationship, we classify it as a linear DP problem.
+
+### Numeric Triangle
+
+- The state:
+  - `f[i][j]`, representing the maximum sum of the path from the top to the $(i, j)$ point, out of all the path possible to move from the $(0,0)$ to $(i,j)$
+  - The state may separated from choosing left or choosing right in the previous step. 
+    - Then the current state can be deduced as `max(f[i - 1][j - 1] + w[i][j], f[i - 1][j] + w[i][j])` 
+    > For the sake of simplicity, one may read the numbers in starting from 1. This prevent i >= 1 that kind of check.
+
+- The time complexity is usually the number of states, times the time complexity of transition. Hence, this algorithm takes $O(N^2)$ times.
+
+
+
+
+## Interval DP
