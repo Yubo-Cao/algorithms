@@ -751,15 +751,14 @@ int main() {
 
 ### SPFA Algorithm
 
-SPFA is a variant of the Bellman-Ford algorithm. It is used to find the shortest path from a single node to all other nodes. It **does not** work on a negative cycle. However, more than $99\%$ of the graphs don't have a negative cycle and SPFA usually yields better performance than Bellman-Ford. Therefore, SPFA is usually used in practice.
+SPFA is a variant of the Bellman-Ford algorithm. It is used to find the shortest path from a single node to all other nodes. It **does not** work on a negative cycle (lead to infinite loop). However, more than $99\%$ of the graphs don't have a negative cycle and SPFA usually yields better performance than Bellman-Ford. Therefore, SPFA is usually used in practice.
 
 It works as follows:
-1. Iterate for $n$ times, where $n$ is the maximum number of nodes on the path to move from the source to the target.
-   1. Put the updated node into the queue.
-   2. Iterate edges in a BFS manner. 
-      1. Get the node from the queue (although one may use stack, priority_queue, and anything else)
-      2. Iterate all the edges from the node. Only the nodes that are updated will be put into the queue. Maintain an array `st`, which indicates whether a node is in the queue or not. If the node already exists in the queue, then don't put it into the queue again.
-      > The rough idea is, only the node whose distance get updated will lead to a update of the distance of its neighbors.
+1. Put the updated node into the queue.
+2. Iterate edges in a BFS manner. 
+  1. Get the node from the queue (although one may use the stack, priority_queue, and anything else)
+  2. Iterate all the edges from the node. Only the nodes that are updated will be put into the queue. Maintain an array `st`, which indicates whether a node is in the queue or not. If the node already exists in the queue, then don't put it into the queue again.
+  > The rough idea is, only the node whose distance get updated will lead to a update of the distance of its neighbors.
 
 ```cpp
 #include <bitset>
@@ -826,6 +825,88 @@ int main() {
     else
         cout << "impossible";
     cout << endl;
+    return 0;
+}
+```
+
+#### Detect Negative Cycle
+
+If we want to use SPFA to detect a negative cycle, we can use the following method:
+1. Create an array `cnt` to record the number of times a node is put into the queue.
+2. Whenever a node is put into the queue, increase the `cnt` by 1.
+3. When the `cnt` of a node is greater than $n$, then there is a negative cycle. We are confident this is not a cycle alone, because otherwise, it wouldn't be put into the queue again.
+
+```cpp
+#include <cstring>
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+const int N = 1e5 + 10;
+const int INF = 0x3f3f3f3f;
+
+int n, m;
+int h[N], e[N], ne[N], w[N], idx;
+int dst[N], cnt[N];
+bool st[N];
+
+void add(int a, int b, int c) {
+    e[idx] = b,
+    w[idx] = c,
+    ne[idx] = h[a],
+    h[a] = idx++;
+}
+
+int spfa() {
+    queue<int> q;
+    // notice we didn't memset dst to INF, because if there is a negative cycle,
+    // dst will be updated regardless.
+
+    // all the node can be the start point
+    for (int i = 1; i <= n; i++) {
+        q.push(i);
+        st[i] = true;
+    }
+
+    // then, bfs
+    while (!q.empty()) {
+        int t = q.front();
+        q.pop();
+        st[t] = false;
+
+        for (int i = h[t]; i != -1; i = ne[i]) {
+            int j = e[i];
+            if (dst[j] > dst[t] + w[i]) {
+                dst[j] = dst[t] + w[i];
+                // by pigeonhole principle, if cnt[j] > n, there must be a
+                // negative cycle
+                if ((cnt[j] = cnt[t] + 1) >= n) return true;
+                if (!st[j]) {
+                    q.push(j);
+                    st[j] = true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+    memset(h, -1, sizeof h);
+
+    cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        add(a, b, c);
+    }
+
+    if (spfa()) cout << "Yes" << endl;
+    else cout << "No" << endl;
+
     return 0;
 }
 ```
