@@ -349,6 +349,184 @@ If the path in which the state transition occurs is linear, then the state trans
 - The time complexity is usually the number of states, times the time complexity of transition. Hence, this algorithm takes $O(N^2)$ times.
 
 
+```cpp
+#include <iostream>
 
+using namespace std;
+
+const int N = 510, INF = 1e9;
+
+int n;
+int a[N][N], f[N][N];
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+
+    cin >> n;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= i; j++) {
+            cin >> a[i][j];
+        }
+    }
+
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= i + 1; j++) {  // must start from 0, to handle f[i - 1][j - 1]
+            f[i][j] = -INF;
+        }
+    }
+
+    f[1][1] = a[1][1];
+
+    for (int i = 2; i <= n; i++) {
+        for (int j = 1; j <= i; j++) {
+            f[i][j] = max(f[i - 1][j - 1], f[i - 1][j]) + a[i][j];
+        }
+    }
+
+    int res = -INF;
+    for (int i = 1; i <= n; i++) {
+        res = max(res, f[n][i]);
+    }
+    cout << res << endl;
+
+    return 0;
+}
+```
+
+### Longest Increasing Subsequence
+
+- State:
+  - `f[i]`, the length of the longest increasing subsequence, out of all the sequences that end at $i$.
+  - `f[i]` can be deduced as the max of `f[j] + 1` where $j < i$ and $a[j] < a[i]$. We partition the sequence into at most `i - 1` part, according to the penultimate element.
+- Then, the result is `max(f[i])` for all $i$. The time complexity is $O(n^2)$.
+
+
+#### Count only
+
+```cpp
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+
+    int n;
+    cin >> n;
+
+    int a[n], f[n];
+    for (int i = 0; i < n; i++) cin >> a[i];
+
+    f[0] = 1;
+    for (int i = 0; i < n; i++) {
+        int m = 1;  // only itself
+        for (int j = 0; j < i; j++) {
+            if (a[j] < a[i])
+                m = max(f[j] + 1, m);
+        }
+        f[i] = m;
+    }
+
+    int m = f[0];
+    for (int i = 1; i < n; i++) m = max(m, f[i]);
+    cout << m << endl;
+    return 0;
+}
+```
+
+#### Print the sequence
+
+Just keep a pointer of the previous element, and print the sequence in reverse order.
+
+```cpp
+#include <iostream>
+#include <stack>
+
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+
+    int n;
+    cin >> n;
+
+    int a[n], f[n], ne[n]; // ne[i] is the previous element of i
+    for (int i = 0; i < n; i++) cin >> a[i];
+
+    for (int i = 0; i < n; i++) {
+        f[i] = 1;
+        for (int j = 0; j < i; j++) {
+            if (a[j] < a[i] && f[j] + 1 > f[i]) {
+                f[i] = f[j] + 1;
+                ne[i] = j; // notice some element will be overwritten --- and that's fine
+            }
+        }
+    }
+
+    int m = f[0], idx = 0;
+    for (int i = 1; i < n; i++) {
+        if (f[i] > m) {
+            m = f[i];
+            idx = i;
+        }
+    }
+
+    cout << m << endl;
+    stack<int> s;
+    for (int i = 0; i < m; i++) {
+        s.push(a[idx]);
+        idx = ne[idx];
+    }
+    while (!s.empty()) {
+        cout << s.top() << " ";
+        s.pop();
+    }
+    cout << endl;
+    
+    return 0;
+}
+```
+
+#### Optimize to $O(n\log{n})$
+
+<!-- TODO: Understand this -->
+
+```cpp
+#include <cstring>
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+
+    int n;
+    cin >> n;
+
+    int a[n];  // the array
+    int q[n];  // the min of each increasing subsequence
+    memset(q, 0, sizeof q);
+    for (int i = 0; i < n; i++) cin >> a[i];
+
+    q[0] = -2e9;
+    int len = 0;  // the max length of increasing subsequence
+    for (int i = 0; i < n; i++) {
+        int l = 0, r = len;
+        while (l < r) {
+            int mid = l + r + 1 >> 1;
+            if (q[mid] < a[i])
+                l = mid;
+            else
+                r = mid - 1;
+        }
+
+        len = max(len, r + 1);
+        q[r + 1] = a[i];
+    }
+
+    cout << len << endl;
+    return 0;
+}
+```
 
 ## Interval DP
