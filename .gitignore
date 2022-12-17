@@ -4,6 +4,7 @@
 !.gitignore
 !.gitattributes
 # remove build files
+a.out
 *.exe
 build/
 out/
