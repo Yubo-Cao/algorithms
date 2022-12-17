@@ -2,6 +2,12 @@
 \usepackage[code, outputdir=build, linespace=1.25, math]{common}
 \usepackage{caption}
 \usepackage[letterpaper]{geometry}
+\usepackage{multicol}
+\usepackage{iftex}
+\ifXeTeX
+	\usepackage{fontspec}
+	\setmonofont[Ligatures=TeX,Contextuals=Alternate]{Fira Code Light}
+\fi
 
 \setminted{fontsize=\footnotesize}
 \usemintedstyle{colorful}
@@ -55,14 +61,14 @@ Each object can only be used once. The state transition is the maximum of two op
 \]
 
 \begin{center}
-	\inputminted[firstline=5]{cpp}{src/struct-0-1-rudimentary-bag.cpp}%
+	\inputminted{cpp}{src/struct-0-1-rudimentary-bag.cpp}%
 	\captionof{listing}{Rudimentary implementation}
 \end{center}
 
 We only use the value of $S(i - 1, \ldots)$ in the calculation, so we don't need to keep track of all of them. Instead, we can use a more efficient version called a \emph{rolling array} as shown below.
 
 \begin{center}
-	\inputminted[firstline=5]{cpp}{src/struct-0-1-bag.cpp}
+	\inputminted[firstline=21, lastline=27]{cpp}{src/struct-0-1-bag.cpp}
 	\captionof{listing}{Improved implementation}
 \end{center}
 
@@ -82,31 +88,89 @@ Each object can be used as many times as possible. The state transition is deter
 where $k = \lfloor \frac{v}{v_i} \rfloor$ and $S(0, 0) = 0$.
 
 \begin{center}
-	\inputminted[firstline=5]{cpp}{src/struct-rudimentary-complete.cpp}
+	\inputminted{cpp}{src/struct-rudimentary-complete.cpp}
 	\captionof{listing}{Rudimentary implementation}
 \end{center}
 
-When the size of the items in the bags are $1$, the worst time situation can be achieved---$O(N^3)$. An optimization can be obtained by observation of similar terms:
-\begin{center}\vspace{-1em}
+When the size of the items in the bags are $1$, the worst time situation can be achieved---$O(N^3)$. An optimization can be obtained by observation of similar terms:\\[0.5em]
+\begingroup
+\centering
+\resizebox{\linewidth}{!}{
 	\begin{tabular}{@{}llllllll@{}}
 		$S(i, v)$       & = & $\max \{$ & $S(i - 1, v)$, & $S(i - 1, v - v_i) + w_i$, & $\ldots$, & $S(i - 1, j - k v_i) + k w_i$       & $\}$ \\
 		$S(i, v - v_i)$ & = & $\max \{$ &                & $S(i - 1, v - v_i)$,       & $\ldots$, & $S(i - 1, j - k v_i) + (k - 1) w_i$ & $\}$
 	\end{tabular}
-\end{center}
+}
+\endgroup\\[0.5em]
 hence, $S(i, v) = \max (S(i, v - v_i) + w_i, S(i - 1, v))$.
 
 \begin{center}
-	\inputminted[firstline=5]{cpp}{src/struct-complete-bag.cpp}
+	\inputminted[firstline=22, lastline=26]{cpp}{src/struct-complete-bag.cpp}
 	\captionof{listing}{Optimized implementation}
 \end{center}
 
+Then, the time complexity would become $O(N^2)$. One might found that this is extremely similar to 0--1 bag problem:
+
+\begin{multicols}{2}
+	\noindent
+	\[
+		S(i, v) = \max \{S(i - 1, v), S(i - 1, v - v_i) + w_i\}
+	\]
+
+	\columnbreak
+	\noindent
+	\[
+		S(i, v) = \max \{S(i - 1, v), S(i, v - v_i) + w_i \}
+	\]
+\end{multicols}
+
+Hence, take the same route that we optimized 0--1 bag problem, we may reduce it into an rolling array. However, we don't iterate in the reverse order, because we need $S(i, v)$ to be computed first and overwrite the previous solution, in order to match the definition in the equation.
+
+\begin{center}
+	\inputminted[firstline=13, lastline=18]{cpp}{src/final-complete-bag.cpp}
+	\captionof{listing}{Final complete bag}
+\end{center}
+
+We must iterate in the forward order and compute $S(i,v)$ first, then overwrite the previous solution to match the definition in the equation.
+
 \subsubsection{Multiple Bag}
 
-Each object can be used at most $m_i$ times. Binary optimization can be applied.
+Each object can be used at most $S_i$ times. The state transition is the maximum of the following options:
+\begin{itemize}
+	\item Not choosing item $i$, leading to $S(i-1,v)$
+	\item Choosing item $i$ once, leading to $S(i-1,v-v_i)+w_i$
+	\item Choosing item $i$ twice, leading to $S(i-1,v-2v_i)+2w_i$
+	\item And so on, until choosing item $i$ $k$ times, where $k=\min{\lfloor \frac{v}{v_i} \rfloor, s_i}$
+\end{itemize}
+
+\begin{center}
+	\inputminted{cpp}{src/struct-rudimentary-multiple-bag.cpp}
+	\captionof{listing}{Rudimentary implementation}
+\end{center}
+
+The optimization method used in the complete bag problem cannot be applied to the multiple bag problem due to the existence of $s_1$. This is because the optimization method would result in $S(i, v - v_i) = \max { S(i, v - v_i), S(i - 1, v - 2 v_i) + w_i, \ldots, S(i - 1, v - k v_i) + (k - 1) w_i }$ and $S(i, v) = \max { S(i - 1, v), S(i - 1, v - v_i) + w_i, \ldots, S(i - 1, v - k v_i) + k w_i }$. When the number of items is limited, i.e. $k = s$, then in the previous step, $S(i - 1, v - (s + 1) v_i) + s w_i$ is computed, which does not match $S(i - 1, v - s v_i) + s w_i$ in the current step. Therefore, it is \emph{impossible} to deduce $S(i, v)$ from $S(i, v - v_i)$.
+
+For any number $n$, it can be represented using $\lfloor \log_2 n \rfloor$ bits plus a residual. For example, $n = 13$ can be represented as $1 + 2 + 4 + 6$. Therefore, we can split the problem into 0-1 bag problems, where each object is either a single object with value $v_i$ and weight $w_i$, or a set of objects obtained by splitting the original object using binary optimization, which has a value of $nv_i$ and a weight of $nw_i$.
+
+\begin{center}
+	\inputminted[firstline=12, lastline=26]{cpp}{src/struct-multiple-bag.cpp}
+	\captionof{listing}{Binary optimization implementation}
+\end{center}
 
 \subsubsection{Grouping}
 
-The objects are grouped into $k$ groups. $1$ element from each group can be selected, at most.
+There are $k$ groups of objects, and we can select at most one object from each group. We define a state $S(i, v)$ to represent the condition of selecting from the first $i$ groups, with a total value of $v$. For each group, we have two options:
+\begin{itemize}
+	\item Don't choose any object from group $i$. This is equivalent to the state $S(i - 1, v)$.
+	\item Choose object $i$ from group $j$. This is equivalent to the state $S(i - 1, v - v_{ij}) + w_{ij}$.
+\end{itemize}
+
+We then transition to the state that is the maximum of the above two options.
+
+\begin{center}
+	\inputminted{cpp}{src/struct-group-bag.cpp}
+	\captionof{listing}{Implementation}
+\end{center}
 
 
 \subsection{Linear DP}
