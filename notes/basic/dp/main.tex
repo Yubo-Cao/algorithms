@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage[code, outputdir=build, linespace=1.25, math]{common}
 \usepackage{caption}
+\usepackage[letterpaper]{geometry}
 
 \setminted{fontsize=\footnotesize}
 \usemintedstyle{colorful}
@@ -24,7 +25,7 @@ Dynamic programming doesn't involve complicated coding techniques. It is more of
 For any dynamic programming problem, we consider:
 
 \begin{description}
-	\item[Representation of State] In bag problem, $S(n, v)$ is always used to represents the state.
+	\item[Representation of State]
 		\begin{description}
 			\item[Collection] A collection of the elements.
 			\item[Property] Aggregate methods and property of individual method.
@@ -40,7 +41,8 @@ Given $n$ objects with a baggie that can only hold at most $w$ weight. Each of t
 In bag problem,
 
 \begin{description}
-	\item[Collection] All the strategies for selecting elements such that the volume sum is smaller than or equal to $v$ and there are a maximum of $n$ items selected.
+	\item[State] In bag problem, $S(i, v)$ is always used to represents the state.
+	\item[Collection] All the strategies for selecting elements such that the volume sum is smaller than or equal to $v$ and only choose among the first $n$ items.
 	\item[Property] Max sum of value of all the strategies.
 \end{description}
 
@@ -68,7 +70,35 @@ In the loop, we use \mono!j >= items[i].v - 1! to consider the situation where n
 
 \subsubsection{Complete Bag}
 
-Each object can be used as many times as possible.
+Each object can be used as many times as possible. The state transition is determined by the maximum of the following options: not choosing $i$, leading to $S(i-1,v)$; choosing $i$, leading to $S(i-1,v-v_i)+w_i$; choosing $i+1$, leading to $S(i-1,v-2v_i)+2w_i$; and so on, until choosing $k$, where $k=\lfloor \frac{v}{v_i} \rfloor$.
+
+\[
+	\begin{split}
+		S(i,v) &= \max \{ S(i-1,v), S(i-1,v-v_i)+w_i, \\
+		&\quad S(i-1,v-2v_i)+2w_i, \ldots, S(i-1,v-kv_i)+kw_i \},
+	\end{split}
+\]
+
+where $k = \lfloor \frac{v}{v_i} \rfloor$ and $S(0, 0) = 0$.
+
+\begin{center}
+	\inputminted[firstline=5]{cpp}{src/struct-rudimentary-complete.cpp}
+	\captionof{listing}{Rudimentary implementation}
+\end{center}
+
+When the size of the items in the bags are $1$, the worst time situation can be achieved---$O(N^3)$. An optimization can be obtained by observation of similar terms:
+\begin{center}\vspace{-1em}
+	\begin{tabular}{@{}llllllll@{}}
+		$S(i, v)$       & = & $\max \{$ & $S(i - 1, v)$, & $S(i - 1, v - v_i) + w_i$, & $\ldots$, & $S(i - 1, j - k v_i) + k w_i$       & $\}$ \\
+		$S(i, v - v_i)$ & = & $\max \{$ &                & $S(i - 1, v - v_i)$,       & $\ldots$, & $S(i - 1, j - k v_i) + (k - 1) w_i$ & $\}$
+	\end{tabular}
+\end{center}
+hence, $S(i, v) = \max (S(i, v - v_i) + w_i, S(i - 1, v))$.
+
+\begin{center}
+	\inputminted[firstline=5]{cpp}{src/struct-complete-bag.cpp}
+	\captionof{listing}{Optimized implementation}
+\end{center}
 
 \subsubsection{Multiple Bag}
 

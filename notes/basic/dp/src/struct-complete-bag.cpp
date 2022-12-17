@@ -1,10 +1,9 @@
-#include <iostream>
 #include <cstring>
+#include <iostream>
 
 using namespace std;
 
-int main()
-{
+int main() {
     int n, v;
     cin >> n >> v;
 
@@ -22,7 +21,9 @@ int main()
 
     for (int i = 1; i <= n; i++)
         for (int j = 0; j <= v; j++)
-            dp[i][j] = max(dp[i - 1][j], (j >= items[i].v) ? dp[i][j - items[i].v] + items[i].w : 0);
+            dp[i][j] = max(dp[i - 1][j], (j >= items[i].v)
+                                             ? dp[i][j - items[i].v] + items[i].w
+                                             : 0);
 
     cout << dp[n][v] << endl;
 }
