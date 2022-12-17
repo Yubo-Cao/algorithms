@@ -1,5 +1,9 @@
 \documentclass{article}
-\usepackage[code, outputdir=build]{common}
+\usepackage[code, outputdir=build, linespace=1.25, math]{common}
+\usepackage{caption}
+
+\setminted{fontsize=\footnotesize}
+\usemintedstyle{colorful}
 
 \title{Dynamic Programming}
 \author{Yubo Cao}
@@ -17,15 +21,50 @@ Dynamic programming doesn't involve complicated coding techniques. It is more of
 
 \subsection{Thinking Pathway}
 
+For any dynamic programming problem, we consider:
 
+\begin{description}
+	\item[Representation of State] In bag problem, $S(n, v)$ is always used to represents the state.
+		\begin{description}
+			\item[Collection] A collection of the elements.
+			\item[Property] Aggregate methods and property of individual method.
+		\end{description}
+	\item[Transition of State] Divide the collection into several smaller, distinct parts that can be calculated using previous results. The divided set must contains all elements, and desirably, not overlapping.
+	\item[Optimization of State] Changing the code or changing the state in a way that produces the same result.
+\end{description}
 
 \subsection{Bag}
 
 Given $n$ objects with a baggie that can only hold at most $w$ weight. Each of the $n$ objects has a weight $w_i$ and a value $v_i$. The goal is to fill the baggie with objects so that the total value is maximized. In all those situations, one doesn't need to fill the baggie to the maximum capacity. The baggie can be filled partially.
 
-\subsubsection{0-1 Bag}
+In bag problem,
 
-Each object can only be used once.
+\begin{description}
+	\item[Collection] All the strategies for selecting elements such that the volume sum is smaller than or equal to $v$ and there are a maximum of $n$ items selected.
+	\item[Property] Max sum of value of all the strategies.
+\end{description}
+
+\subsubsection{0--1 Bag}
+
+Each object can only be used once. The state transition is the maximum of two options: either not selecting element $i$, or selecting element $i$ and removing it from the collection, in which case the maximum value can be obtained by selecting among the remaining $i - 1$ elements with a volume limit of $v - v_i$.
+
+\[
+	\max(S(i - 1, v), S(i - 1, v - v_i) + w_i)
+\]
+
+\begin{center}
+	\inputminted[firstline=5]{cpp}{src/struct-0-1-rudimentary-bag.cpp}%
+	\captionof{listing}{Rudimentary implementation}
+\end{center}
+
+We only use the value of $S(i - 1, \ldots)$ in the calculation, so we don't need to keep track of all of them. Instead, we can use a more efficient version called a \emph{rolling array} as shown below.
+
+\begin{center}
+	\inputminted[firstline=5]{cpp}{src/struct-0-1-bag.cpp}
+	\captionof{listing}{Improved implementation}
+\end{center}
+
+In the loop, we use \mono!j >= items[i].v - 1! to consider the situation where nothing has been used. This is because \mono!dp[v]! represents $S(..., v + 1)$ due to the 0-based index. Additionally, the elements are iterated in reverse order to prevent $S(a-1,v)$ from being updated before $S(a,v)$. If we iterate from left to right, then $S(a-1,v)$ will be updated before it is used in later cases.
 
 \subsubsection{Complete Bag}
 
@@ -33,12 +72,11 @@ Each object can be used as many times as possible.
 
 \subsubsection{Multiple Bag}
 
-Each object can be used at most $m_i$ times.
+Each object can be used at most $m_i$ times. Binary optimization can be applied.
 
 \subsubsection{Grouping}
 
-The objects are grouped into $k$ groups. Only 1 object from each group can be used.
-
+The objects are grouped into $k$ groups. $1$ element from each group can be selected, at most.
 
 
 \subsection{Linear DP}
