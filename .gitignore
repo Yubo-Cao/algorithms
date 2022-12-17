@@ -1,6 +1,10 @@
-# 项目排除路径
-/out/
+# remove all hidden files
 .*
+# keep .gitignore & .gitattributes
 !.gitignore
+!.gitattributes
+# remove build files
 *.exe
+*.out
 build/
+out/
