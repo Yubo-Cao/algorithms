@@ -5,6 +5,5 @@
 !.gitattributes
 # remove build files
 *.exe
-*.out
 build/
 out/
