@@ -10,7 +10,7 @@
 \fi
 
 \setminted{fontsize=\footnotesize}
-\usemintedstyle{colorful}
+\usemintedstyle{lovelace}
 
 \title{Dynamic Programming}
 \author{Yubo Cao}
@@ -52,7 +52,7 @@ In bag problem,
 	\item[Property] Max sum of value of all the strategies.
 \end{description}
 
-\subsubsection{0--1 Bag}
+\subsubsection{0-1 Bag}
 
 Each object can only be used once. The state transition is the maximum of two options: either not selecting element $i$, or selecting element $i$ and removing it from the collection, in which case the maximum value can be obtained by selecting among the remaining $i - 1$ elements with a volume limit of $v - v_i$.
 
@@ -172,8 +172,74 @@ We then transition to the state that is the maximum of the above two options.
 	\captionof{listing}{Implementation}
 \end{center}
 
-
 \subsection{Linear DP}
+
+If the state transition function is linear, then we categorize it as linear DP. The state transition function is linear if it can be expressed as a linear combination of the previous states. For example, the state transition function of the complete bag problem is linear, because it can be expressed as $S(i, v) = S(i, v - v_i) + w_i$. Usually, you would calculate the state array from left to right, top to down in such situation.
+
+\subsubsection{Number Triangle}
+
+\begin{description}
+	\item[Collectopm] All the path ot move from the top to the bottom of the triangle.
+	\item[Property] The max, of all the sums of each path.
+	\item[State] $S(i, j)$ represents the maximum sum of the path from the top to the point $(i, j)$. Then, $S(i, j) = \max \left\{S(i - 1, j - 1), S(i - 1, j)\right\} + a_{ij}$, where $a_{ij}$ is the value of the point $(i, j)$. Basically, just move from upper left or upper right.
+\end{description}
+
+\begin{center}
+	\inputminted{cpp}{src/number-trig.cpp}
+	\captionof{listing}{Number triangle}
+\end{center}
+
+To calculate the complexity of the algorithm, we multiply the number of states by the number of operations required to reach each state. In this case, we have $n^2$ states and each state can be reached with $O(1)$ operations. Therefore, the complexity is $O(n^2)$.
+
+\subsubsection{Longest Increasing Subsequence}
+
+\begin{description}
+	\item[Collection] All the increasing subsequences.
+	\item[Property] The length of the longest increasing subsequence.
+	\item[State] $S(i)$ represents the length of the longest increasing subsequence that ends with the $i$-th element. Then, $S(i) = \max \left\{S(j) + 1\right\}$, where $j < i$ and $a_j < a_i$ (i.e., classified by the penultimate element).
+\end{description}
+
+Then, the time complexity is $O(n^2)$, for there are $n$ states with $O(n)$ operations to reach each state.
+
+\begin{center}
+	\inputminted{cpp}{src/longest-increase-subsequence.cpp}
+	\captionof{listing}{Longest increasing subsequence}
+\end{center}
+
+If we want to find the longest increasing subsequence, we can keep track of each state transition.
+
+\begin{center}
+	\inputminted{cpp}{src/find-longest-increase-subsequence.cpp}
+	\captionof{listing}{Find longest increasing subsequence}
+\end{center}
+
+We can often use a strategy that involves tracking state transitions and using this information to recover the solution.
+
+\subsubsection{Longest Common Subsequence}
+
+\begin{description}
+	\item[Collection] All the common subsequences.
+	\item[Property] The length of the longest common subsequence.
+	\item[State] $S(i, j)$\footnote{Since there are 2 sequences, we would use 2 dimension usually.} represents the length of the longest common subsequence of the first $i$ characters of string $a$ and the first $j$ characters of string $b$. Then, $S(i, j) = \max \left\{S(i - 1, j), S(i, j - 1)\right\}$, if $a_i \neq b_j$, and $S(i, j) = S(i - 1, j - 1) + 1$, if $a_i = b_j$.
+
+		This is a condensed version of all 4 cases:
+		\begin{itemize}
+			\item Don't select $a_i$ and $b_j$, which is equivalent to $S(i - 1, j - 1) $.
+			\item Select $a_i$ and select $b_j$, which is equivalent to $S(i, j - 1) + 1$.
+			\item Select $a_i$, but not $b_j$, which is equivalent to $S(i - 1, j)$
+			\item Select $b_j$, but not $a_i$, which is equivalent to $S(i, j - 1)$.
+		\end{itemize}
+
+		Meticulous reader would realize, $S(i - 1, j)$ represents the length of the longest increasing subsequence using only $a_{1, i - 1}$ and $b_{1, j}$. Therefore, the max of $S(i - 1, j)$ is not just the length of the longest, increasing subsequence that end in $a_i$. However, this doesn't matter because we are only interested in the length of the longest common subsequence among all of those situations. As the situation when $a_i$ ended the subsequence is address in previous state, this is not a problem. By similar reasoning, we can conclude that $S(i, j - 1)$ is also not a problem.
+\end{description}
+
+\begin{center}
+	\inputminted{cpp}{src/longest-common-subsequence.cpp}
+	\captionof{listing}{Longest common subsequence}
+\end{center}
+
+
+
 \subsection{Interval DP}
 \subsection{Counting DP}
 \subsection{Memorization}
