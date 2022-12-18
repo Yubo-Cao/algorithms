@@ -8,3 +8,5 @@ a.out
 *.exe
 build/
 out/
+# contest
+contest
