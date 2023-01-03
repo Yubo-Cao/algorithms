@@ -1,5 +1,16 @@
 \documentclass{article}
-\usepackage[code, outputdir=build]{common}
+\usepackage[code, outputdir=build, linespace=1.25, math]{common}
+\usepackage{caption}
+\usepackage[letterpaper]{geometry}
+\usepackage{multicol}
+\usepackage{iftex}
+\ifXeTeX
+	\usepackage{fontspec}
+	\setmonofont[Ligatures=TeX,Contextuals=Alternate]{Fira Code Light}
+\fi
+
+\setminted{fontsize=\footnotesize}
+\usemintedstyle{lovelace}
 
 \title{Dynamic Programming}
 \author{Yubo Cao}
@@ -17,28 +28,217 @@ Dynamic programming doesn't involve complicated coding techniques. It is more of
 
 \subsection{Thinking Pathway}
 
+For any dynamic programming problem, we consider:
+
+\begin{description}
+	\item[Representation of State]
+		\begin{description}
+			\item[Collection] A collection of the elements.
+			\item[Property] Aggregate methods and property of individual method.
+		\end{description}
+	\item[Transition of State] Divide the collection into several smaller, distinct parts that can be calculated using previous results. The divided set must contains all elements, and desirably, not overlapping.
+	\item[Optimization of State] Changing the code or changing the state in a way that produces the same result.
+\end{description}
+
 \subsection{Bag}
 
 Given $n$ objects with a bag that can only hold at most $w$ weight. Each of the $n$ objects has a weight $w_i$ and a value $v_i$. The goal is to fill the bag with objects so that the total value is maximized. In all those situations, one doesn't need to fill the bag to the maximum capacity. The bag can be filled partially.
+
+In bag problem,
+
+\begin{description}
+	\item[State] In bag problem, $S(i, v)$ is always used to represents the state.
+	\item[Collection] All the strategies for selecting elements such that the volume sum is smaller than or equal to $v$ and only choose among the first $n$ items.
+	\item[Property] Max sum of value of all the strategies.
+\end{description}
 \subsubsection{0-1 Bag}
 
-Each object can only be used once.
+Each object can only be used once. The state transition is the maximum of two options: either not selecting element $i$, or selecting element $i$ and removing it from the collection, in which case the maximum value can be obtained by selecting among the remaining $i - 1$ elements with a volume limit of $v - v_i$.
+
+\[
+	\max(S(i - 1, v), S(i - 1, v - v_i) + w_i)
+\]
+
+\begin{center}
+	\inputminted{cpp}{src/struct-0-1-rudimentary-bag.cpp}%
+	\captionof{listing}{Rudimentary implementation}
+\end{center}
+
+We only use the value of $S(i - 1, \ldots)$ in the calculation, so we don't need to keep track of all of them. Instead, we can use a more efficient version called a \emph{rolling array} as shown below.
+
+\begin{center}
+	\inputminted[firstline=21, lastline=27]{cpp}{src/struct-0-1-bag.cpp}
+	\captionof{listing}{Improved implementation}
+\end{center}
+
+In the loop, we use \mono!j >= items[i].v - 1! to consider the situation where nothing has been used. This is because \mono!dp[v]! represents $S(..., v + 1)$ due to the 0-based index. Additionally, the elements are iterated in reverse order to prevent $S(a-1,v)$ from being updated before $S(a,v)$. If we iterate from left to right, then $S(a-1,v)$ will be updated before it is used in later cases.
 
 \subsubsection{Complete Bag}
 
-Each object can be used as many times as possible.
+Each object can be used as many times as possible. The state transition is determined by the maximum of the following options: not choosing $i$, leading to $S(i-1,v)$; choosing $i$, leading to $S(i-1,v-v_i)+w_i$; choosing $i+1$, leading to $S(i-1,v-2v_i)+2w_i$; and so on, until choosing $k$, where $k=\lfloor \frac{v}{v_i} \rfloor$.
+
+\[
+	\begin{split}
+		S(i,v) &= \max \{ S(i-1,v), S(i-1,v-v_i)+w_i, \\
+		&\quad S(i-1,v-2v_i)+2w_i, \ldots, S(i-1,v-kv_i)+kw_i \},
+	\end{split}
+\]
+
+where $k = \lfloor \frac{v}{v_i} \rfloor$ and $S(0, 0) = 0$.
+
+\begin{center}
+	\inputminted{cpp}{src/struct-rudimentary-complete.cpp}
+	\captionof{listing}{Rudimentary implementation}
+\end{center}
+
+When the size of the items in the bags are $1$, the worst time situation can be achieved---$O(N^3)$. An optimization can be obtained by observation of similar terms:\\[0.5em]
+\begingroup
+\centering
+\resizebox{\linewidth}{!}{
+	\begin{tabular}{@{}llllllll@{}}
+		$S(i, v)$       & = & $\max \{$ & $S(i - 1, v)$, & $S(i - 1, v - v_i) + w_i$, & $\ldots$, & $S(i - 1, j - k v_i) + k w_i$       & $\}$ \\
+		$S(i, v - v_i)$ & = & $\max \{$ &                & $S(i - 1, v - v_i)$,       & $\ldots$, & $S(i - 1, j - k v_i) + (k - 1) w_i$ & $\}$
+	\end{tabular}
+}
+\endgroup\\[0.5em]
+hence, $S(i, v) = \max (S(i, v - v_i) + w_i, S(i - 1, v))$.
+
+\begin{center}
+	\inputminted[firstline=22, lastline=26]{cpp}{src/struct-complete-bag.cpp}
+	\captionof{listing}{Optimized implementation}
+\end{center}
+
+Then, the time complexity would become $O(N^2)$. One might found that this is extremely similar to 0--1 bag problem:
+
+\begin{multicols}{2}
+	\noindent
+	\[
+		S(i, v) = \max \{S(i - 1, v), S(i - 1, v - v_i) + w_i\}
+	\]
+
+	\columnbreak
+	\noindent
+	\[
+		S(i, v) = \max \{S(i - 1, v), S(i, v - v_i) + w_i \}
+	\]
+\end{multicols}
+
+Hence, take the same route that we optimized 0--1 bag problem, we may reduce it into an rolling array. However, we don't iterate in the reverse order, because we need $S(i, v)$ to be computed first and overwrite the previous solution, in order to match the definition in the equation.
+
+\begin{center}
+	\inputminted[firstline=13, lastline=18]{cpp}{src/final-complete-bag.cpp}
+	\captionof{listing}{Final complete bag}
+\end{center}
+
+We must iterate in the forward order and compute $S(i,v)$ first, then overwrite the previous solution to match the definition in the equation.
 
 \subsubsection{Multiple Bag}
 
-Each object can be used at most $m_i$ times.
+Each object can be used at most $S_i$ times. The state transition is the maximum of the following options:
+\begin{itemize}
+	\item Not choosing item $i$, leading to $S(i-1,v)$
+	\item Choosing item $i$ once, leading to $S(i-1,v-v_i)+w_i$
+	\item Choosing item $i$ twice, leading to $S(i-1,v-2v_i)+2w_i$
+	\item And so on, until choosing item $i$ $k$ times, where $k=\min{\lfloor \frac{v}{v_i} \rfloor, s_i}$
+\end{itemize}
+
+\begin{center}
+	\inputminted{cpp}{src/struct-rudimentary-multiple-bag.cpp}
+	\captionof{listing}{Rudimentary implementation}
+\end{center}
+
+The optimization method used in the complete bag problem cannot be applied to the multiple bag problem due to the existence of $s_1$. This is because the optimization method would result in $S(i, v - v_i) = \max { S(i, v - v_i), S(i - 1, v - 2 v_i) + w_i, \ldots, S(i - 1, v - k v_i) + (k - 1) w_i }$ and $S(i, v) = \max { S(i - 1, v), S(i - 1, v - v_i) + w_i, \ldots, S(i - 1, v - k v_i) + k w_i }$. When the number of items is limited, i.e. $k = s$, then in the previous step, $S(i - 1, v - (s + 1) v_i) + s w_i$ is computed, which does not match $S(i - 1, v - s v_i) + s w_i$ in the current step. Therefore, it is \emph{impossible} to deduce $S(i, v)$ from $S(i, v - v_i)$.
+
+For any number $n$, it can be represented using $\lfloor \log_2 n \rfloor$ bits plus a residual. For example, $n = 13$ can be represented as $1 + 2 + 4 + 6$. Therefore, we can split the problem into 0-1 bag problems, where each object is either a single object with value $v_i$ and weight $w_i$, or a set of objects obtained by splitting the original object using binary optimization, which has a value of $nv_i$ and a weight of $nw_i$.
+
+\begin{center}
+	\inputminted[firstline=12, lastline=26]{cpp}{src/struct-multiple-bag.cpp}
+	\captionof{listing}{Binary optimization implementation}
+\end{center}
 
 \subsubsection{Grouping}
 
-The objects are grouped into $k$ groups. Only 1 object from each group can be used.
+There are $k$ groups of objects, and we can select at most one object from each group. We define a state $S(i, v)$ to represent the condition of selecting from the first $i$ groups, with a total value of $v$. For each group, we have two options:
+\begin{itemize}
+	\item Don't choose any object from group $i$. This is equivalent to the state $S(i - 1, v)$.
+	\item Choose object $i$ from group $j$. This is equivalent to the state $S(i - 1, v - v_{ij}) + w_{ij}$.
+\end{itemize}
 
+We then transition to the state that is the maximum of the above two options.
 
+\begin{center}
+	\inputminted{cpp}{src/struct-group-bag.cpp}
+	\captionof{listing}{Implementation}
+\end{center}
 
 \subsection{Linear DP}
+
+If the state transition function is linear, then we categorize it as linear DP. The state transition function is linear if it can be expressed as a linear combination of the previous states. For example, the state transition function of the complete bag problem is linear, because it can be expressed as $S(i, v) = S(i, v - v_i) + w_i$. Usually, you would calculate the state array from left to right, top to down in such situation.
+
+\subsubsection{Number Triangle}
+
+\begin{description}
+	\item[Collectopm] All the path ot move from the top to the bottom of the triangle.
+	\item[Property] The max, of all the sums of each path.
+	\item[State] $S(i, j)$ represents the maximum sum of the path from the top to the point $(i, j)$. Then, $S(i, j) = \max \left\{S(i - 1, j - 1), S(i - 1, j)\right\} + a_{ij}$, where $a_{ij}$ is the value of the point $(i, j)$. Basically, just move from upper left or upper right.
+\end{description}
+
+\begin{center}
+	\inputminted{cpp}{src/number-trig.cpp}
+	\captionof{listing}{Number triangle}
+\end{center}
+
+To calculate the complexity of the algorithm, we multiply the number of states by the number of operations required to reach each state. In this case, we have $n^2$ states and each state can be reached with $O(1)$ operations. Therefore, the complexity is $O(n^2)$.
+
+\subsubsection{Longest Increasing Subsequence}
+
+\begin{description}
+	\item[Collection] All the increasing subsequences.
+	\item[Property] The length of the longest increasing subsequence.
+	\item[State] $S(i)$ represents the length of the longest increasing subsequence that ends with the $i$-th element. Then, $S(i) = \max \left\{S(j) + 1\right\}$, where $j < i$ and $a_j < a_i$ (i.e., classified by the penultimate element).
+\end{description}
+
+Then, the time complexity is $O(n^2)$, for there are $n$ states with $O(n)$ operations to reach each state.
+
+\begin{center}
+	\inputminted{cpp}{src/longest-increase-subsequence.cpp}
+	\captionof{listing}{Longest increasing subsequence}
+\end{center}
+
+If we want to find the longest increasing subsequence, we can keep track of each state transition.
+
+\begin{center}
+	\inputminted{cpp}{src/find-longest-increase-subsequence.cpp}
+	\captionof{listing}{Find longest increasing subsequence}
+\end{center}
+
+We can often use a strategy that involves tracking state transitions and using this information to recover the solution.
+
+\subsubsection{Longest Common Subsequence}
+
+\begin{description}
+	\item[Collection] All the common subsequences.
+	\item[Property] The length of the longest common subsequence.
+	\item[State] $S(i, j)$\footnote{Since there are 2 sequences, we would use 2 dimension usually.} represents the length of the longest common subsequence of the first $i$ characters of string $a$ and the first $j$ characters of string $b$. Then, $S(i, j) = \max \left\{S(i - 1, j), S(i, j - 1)\right\}$, if $a_i \neq b_j$, and $S(i, j) = S(i - 1, j - 1) + 1$, if $a_i = b_j$.
+
+		This is a condensed version of all 4 cases:
+		\begin{itemize}
+			\item Don't select $a_i$ and $b_j$, which is equivalent to $S(i - 1, j - 1) $.
+			\item Select $a_i$ and select $b_j$, which is equivalent to $S(i, j - 1) + 1$.
+			\item Select $a_i$, but not $b_j$, which is equivalent to $S(i - 1, j)$
+			\item Select $b_j$, but not $a_i$, which is equivalent to $S(i, j - 1)$.
+		\end{itemize}
+
+		Meticulous reader would realize, $S(i - 1, j)$ represents the length of the longest increasing subsequence using only $a_{1, i - 1}$ and $b_{1, j}$. Therefore, the max of $S(i - 1, j)$ is not just the length of the longest, increasing subsequence that end in $a_i$. However, this doesn't matter because we are only interested in the length of the longest common subsequence among all of those situations. As the situation when $a_i$ ended the subsequence is address in previous state, this is not a problem. By similar reasoning, we can conclude that $S(i, j - 1)$ is also not a problem.
+\end{description}
+
+\begin{center}
+	\inputminted{cpp}{src/longest-common-subsequence.cpp}
+	\captionof{listing}{Longest common subsequence}
+\end{center}
+
+
+
 \subsection{Interval DP}
 \subsection{Counting DP}
 \subsection{Memorization}
