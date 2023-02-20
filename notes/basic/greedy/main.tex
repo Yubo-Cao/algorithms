@@ -6,10 +6,12 @@
 
 \title{Greedy Algorithm}
 \date{\today}
-\author{Yubo C., Anish G.}
+\author{Yubo~C., Anish~G.}
 
 \begin{document}
 \maketitle
+
+\newpage
 
 \section{Introduction}
 
@@ -53,11 +55,11 @@ We prove that the algorithm will yield a valid solution, first.
 \begin{itemize}
     \item If we have only one interval, the algorithm will select the endpoint of the interval.
     \item Assume that the algorithm is correct for $N-1$ intervals. Then, we have the following cases:
-          \begin{itemize}
-              \item If the $N$th interval contains a point, then the algorithm will pass.
-              \item Otherwise, the algorithm will select the right endpoint of the $N$th interval.
-          \end{itemize}
-          In both cases, the algorithm is correct.
+    \begin{itemize}
+        \item If the $N$th interval contains a point, then the algorithm will pass.
+        \item Otherwise, the algorithm will select the right endpoint of the $N$th interval.
+    \end{itemize}
+    In both cases, the algorithm is correct.
     \item Hence, the algorithm is correct for $N$ intervals.
 \end{itemize}
 
@@ -68,10 +70,10 @@ Now we want to prove that this will converge to the optimal solution.
 \begin{itemize}
     \item If we have only one interval, the answer is $1$, which is the same as the algorithm's output.
     \item Assuming that the algorithm is correct for $N-1$ intervals. Then, we have the following cases:
-          \begin{itemize}
-              \item If the $N$th interval contains the point, the algorithm will simply pass over it, and the result will be the same as for the first $N-1$ intervals, which is already proven to be correct.
-              \item Otherwise, the algorithm will select the $b_N$ as the point. This solution is optimal, as, if any point, $p > a_N$, to the left of $b_N$ is selected and this still constitutes a valid solution, then there must be an overlap of all the intervals covered by $b_N$ from $(p, b_N)$. But considering the interval that started in $(p, B_p)$, then it would not be covered by $p$ and would need another point, which is a contradiction. Hence, $b_N$ is the optimal solution.
-          \end{itemize}
+    \begin{itemize}
+        \item If the $N$th interval contains the point, the algorithm will simply pass over it, and the result will be the same as for the first $N-1$ intervals, which is already proven to be correct.
+        \item Otherwise, the algorithm will select the $b_N$ as the point. This solution is optimal, as, if any point, $p > a_N$, to the left of $b_N$ is selected and this still constitutes a valid solution, then there must be an overlap of all the intervals covered by $b_N$ from $(p, b_N)$. But considering the interval that started in $(p, B_p)$, then it would not be covered by $p$ and would need another point, which is a contradiction. Hence, $b_N$ is the optimal solution.
+    \end{itemize}
 \end{itemize}
 
 Therefore, $ans \ge cnt$. And therefore, $ans = cnt$.
@@ -96,6 +98,17 @@ Therefore, $ans \ge cnt$. And therefore, $ans = cnt$.
     }
     System.out.println(count);
 \end{minted}
+
+\subsection{Maximum non-overlapping segments}
+
+Given $N$ closed intervals $[a_i,b_i]$, please select as few intervals as possible on the number line, so that each interval does not overlap with any other selected interval.
+
+\subsubsection{Proof}
+
+% 34:14
+
+Interestingly, the solution for this problem is the same as the previous one. The proof is also the same: if we want to select as few intervals as possible, then we should make sure as many intervals as possible are covered by the selected intervals. Hence, they are equivalent.
+
 
 
 \end{document}
