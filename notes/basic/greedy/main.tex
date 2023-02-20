@@ -23,7 +23,7 @@ Greedy algorithms don't have a template or a pre-defined procedure to follow.
 The code is written on the fly and is usually concise, whereas the correctness of the algorithm is harder to prove.
 Hence, we shall focus on the problems directly, and provide exhaustive proof of correctness.
 
-\section{Problems}
+\section{Interval}
 
 \subsection{Select Points on an Interval}
 
@@ -128,5 +128,48 @@ First, we prove that this algorithm yields a valid solution.
 Therefore, $ans \ge cnt$.
 
 Now, we want to prove that you can't select any more intervals. Assume we can find a solution with $cnt + 1$ intervals. Then we should be able to find another interval that does not overlap with any of the selected intervals. By proof in the previous question, all the intervals must contain at least 1 point. Therefore, there doesn't exist any interval that does not overlap with any of the selected intervals. By contradiction, we have proven that the algorithm is correct.
+
+\subsection{Grouping Interval}
+
+Given $N$ closed intervals $[a_i,b_i]$, please group these intervals into as few groups as possible, so that each group has no overlapping intervals, and the number of groups is as small as possible.
+
+\subsubsection{Solution}
+
+\begin{algorithm}[H]
+    \Input{Number of intervals $N$, $N$ intervals $[a_i,b_i]$}
+    \Output{Number of groups $cnt$}
+    \BlankLine
+    Sort intervals by left endpoint\;
+    $cnt \gets 0$\;
+    \For{$i \gets 1$ to $N$}
+    {
+        \If{$[a_i,b_i]$ can be put into an existing group(s)}
+        {
+            Put $[a_i,b_i]$ into the group (any one)\;
+        }
+        \Else
+        {
+            $cnt \gets cnt + 1$\;
+            Create a new group\;
+            Put $[a_i,b_i]$ into the group\;
+        }
+    }
+    \Return $cnt$\;
+\end{algorithm}
+
+\subsubsection{Proof}
+
+It's easy to see that the algorithm will yield a valid solution, \ie, $ans \le cnt$. However, we want to prove that this algorithm will yield the optimal solution.
+
+\begin{itemize}
+    \item If we have only one interval, the algorithm returns $1$, just as the optimal solution.
+    \item Assuming that the algorithm is correct for $N-1$ intervals, we have the following cases:
+    \begin{itemize}
+        \item We can put the $N$th interval into an existing group. Then the result will be the same as for the first $N-1$ intervals, which is already optimal.
+        \item Otherwise, we will create a new group and put the $N$th interval into it. This is necessary, as we can see all the existing groups must have at least one interval that has its right endpoints on the new interval (as they wouldn't have overlapped otherwise), and their left endpoint must all be smaller than or equal to the left end points of the new interval (as we sorted them). Hence, all those groups, and the last interval, must have overlapped here. Therefore, it's impossible to create $cnt - 1$ groups while still keeping them separated, as by the pigeonhole principle.
+    \end{itemize}
+\end{itemize}
+
+
 
 \end{document}
