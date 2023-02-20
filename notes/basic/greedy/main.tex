@@ -1,8 +1,12 @@
 \documentclass{article}
 \usepackage[code]{common}
+
 \usepackage{algorithm2e}
 \SetKwInOut{Input}{Input}
 \SetKwInOut{Output}{Output}
+
+\usepackage{fontspec}
+\setmonofont[Ligatures=TeX, Contextuals=Alternate]{Fira Code Retina}
 
 \title{Greedy Algorithm}
 \date{\today}
@@ -101,14 +105,28 @@ Therefore, $ans \ge cnt$. And therefore, $ans = cnt$.
 
 \subsection{Maximum non-overlapping segments}
 
-Given $N$ closed intervals $[a_i,b_i]$, please select as few intervals as possible on the number line, so that each interval does not overlap with any other selected interval.
+Given $N$ closed intervals $[a_i,b_i]$, please select as many intervals as possible on the number line, so that each interval does not overlap with any other selected interval.
 
 \subsubsection{Proof}
 
-% 34:14
+Interestingly, the solution for this problem is the same as the previous one. However, the proof is slightly different.
 
-Interestingly, the solution for this problem is the same as the previous one. The proof is also the same: if we want to select as few intervals as possible, then we should make sure as many intervals as possible are covered by the selected intervals. Hence, they are equivalent.
+First, we prove that this algorithm yields a valid solution.
 
+\begin{itemize}
+    \item If we have only one interval, the algorithm will select the interval.
+    \item Assuming this algorithm is correct for $N-1$ intervals, we have the following cases:
 
+    \begin{itemize}
+        \item If the $N$th interval overlaps with previous selected point $p$, then we will pass over it.
+        \item Otherwise, we will set $p = b_N$ and select the $N$th interval. We also increment the counter.
+    \end{itemize}
+
+    The algorithm's newly selected interval will not overlap with the previously selected interval, by all means.
+\end{itemize}
+
+Therefore, $ans \ge cnt$.
+
+Now, we want to prove that you can't select any more intervals. Assume we can find a solution with $cnt + 1$ intervals. Then we should be able to find another interval that does not overlap with any of the selected intervals. By proof in the previous question, all the intervals must contain at least 1 point. Therefore, there doesn't exist any interval that does not overlap with any of the selected intervals. By contradiction, we have proven that the algorithm is correct.
 
 \end{document}
