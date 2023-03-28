@@ -9,5 +9,6 @@ a.out
 build/
 out/
 0
+.mypy_cache/
 # contest
 contest
