@@ -1,23 +1,14 @@
-from decimal import *
+from decimal import Decimal
 
 for i in range(int(input())):
-    amount = input()
-    amt = Decimal(amount[1:])
-    numQ, numD, numN, numP = 0, 0, 0, 0
-    while (amt >= 0.25):
-        amt -= Decimal(0.25)
-        numQ += 1
-    while (amt >= 0.10):
-        amt -= Decimal(0.10)
-        numD += 1
-    while (amt >= 0.05):
-        amt -= Decimal(0.05)
-        numN += 1
-    while (amt > 0):
-        amt -= Decimal(0.01)
-        numP += 1
-    print(amount)
-    print("Quarters="+str(numQ))
-    print("Dimes="+str(numD))
-    print("Nickels="+str(numN))
-    print("Pennies="+str(numP))
+    amount = Decimal((raw := input())[1:])
+    print(raw)
+    coins = [
+        (Decimal("0.25"), "Quarters"),
+        (Decimal("0.10"), "Dimes"),
+        (Decimal("0.05"), "Nickels"),
+        (Decimal("0.01"), "Pennies"),
+    ]
+    for coin in coins:
+        print(coin[1] + "=" + str(int(amount / coin[0])))
+        amount %= coin[0]
