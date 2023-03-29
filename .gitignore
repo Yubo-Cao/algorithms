@@ -12,3 +12,5 @@ out/
 .mypy_cache/
 # contest
 contest
+# add config file
+!.vscode/
