@@ -6,7 +6,7 @@ for i in range(n):
     for j in range(len(bats)):
         sum += (int(bats[j][0]) if (bats[j][0] in "123") else 0)
         sum += (4 if (bats[j][0] == "H") else 0)
-    result = f'{round(sum/len(bats), 3):.3f}'
+    result = (f'{round(sum/len(bats), 3):.3f}' if len(bats) > 0 else "0.000")
     print(name + "=" + result)
         
             
