@@ -1,0 +1,11 @@
+restart d.exe
+restart e.exe
+restart b.exe
+exit
+restart d.exe
+restart e.exe
+restart f.exe
+restart b.exe
+restart c.exe
+restart a.exe
+exit

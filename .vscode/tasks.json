@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "CodeQuest Check",
+      "command": "diff (Get-Content -Path ${fileDirname}/1.out) (Get-Content -Path ${fileDirname}/1.in | python ${file})",
+      "group": "build",
+      "type": "shell"
+    },
+    {
+      "label": "CodeQuest Run",
+      "command": "Get-Content -Path ${fileDirname}/1.in | python ${file}",
+      "group": "build",
+      "type": "shell"
+    },
+  ]
+}
