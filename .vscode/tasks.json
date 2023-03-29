@@ -12,6 +12,6 @@
       "command": "Get-Content -Path ${fileDirname}/1.in | python ${file}",
       "group": "build",
       "type": "shell"
-    }
+    },
   ]
 }
