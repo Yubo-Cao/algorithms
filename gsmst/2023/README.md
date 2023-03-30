@@ -1,0 +1,1 @@
+This stores all the solutions to GSMST 2023 competition.
