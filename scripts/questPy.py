@@ -3,7 +3,7 @@ import subprocess
 import sys
 
 # Define the base path where the folder should be created
-base_path = f"C:/Users/{os.getlogin()}/algorithms/codequest/2020-2021/python/"
+base_path = f"C:/Users/{os.getlogin()}/algorithms/gsmst/2023/"
 
 # Get the name of the folder from the first command line argument
 folder_name = sys.argv[1]
