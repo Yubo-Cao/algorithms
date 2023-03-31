@@ -1,20 +1,26 @@
-mllh_capacity, mllh_s = map(int, input().split())
-lllh_capacity, lllh_students = map(int, input().split())
-caf_capacity, caf_students = map(int, input().split())
+from typing import cast
 
-# Move students from LLLH to CAF
-move = min(lllh_students, caf_capacity - caf_students)
-lllh_students -= move
-caf_students += move
+Room = tuple[int, int]  # students, capacity
+rd = lambda: cast(Room, tuple(tuple(map(int, input().split()))))
+mllh, lllh, cafe = rd(), rd(), rd()
 
-# Move students from MLLH to LLLH
-move = min(mllh_s, lllh_capacity - lllh_students)
-mllh_s -= move
-lllh_students += move
 
-# Move students from CAF to MLLH
-move = min(caf_students, mllh_capacity - mllh_s)
-mllh_s += move
-caf_students -= move
+def move(fr: Room, to: Room) -> tuple[Room, Room]:
+    mv = min(fr[0], to[1] - to[0])
+    fr = (fr[0] - mv, fr[1])
+    to = (to[0] + mv, to[1])
+    return fr, to
 
-print(mllh_s, lllh_students, caf_students, sep='\n')
+
+# move from mllh -> lllh, lllh -> cafe, cafe -> mllh
+def cyclic_move(mllh: Room, lllh: Room, cafe: Room) -> tuple[Room, Room, Room]:
+    mllh, lllh = move(mllh, lllh)
+    lllh, cafe = move(lllh, cafe)
+    cafe, mllh = move(cafe, mllh)
+    return mllh, lllh, cafe
+
+
+for _ in range(20):
+    mllh, lllh, cafe = cyclic_move(mllh, lllh, cafe)
+
+print(mllh[0], lllh[0], cafe[0], sep="\n")

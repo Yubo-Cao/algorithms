@@ -1,3 +1,3 @@
 import re
-s = input()
-print(re.match("e(19|20)\d{7}|\d{9}", s) and "VALID" or "INVALID")
+
+print("VALID" if re.match(r"e(19|20)\d{7}|\d{9}", input()) else "INVALID")
