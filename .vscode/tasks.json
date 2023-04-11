@@ -13,5 +13,11 @@
       "group": "build",
       "type": "shell"
     },
+    {
+      "label": "Build C++",
+      "command": "g++ -std=c++17 -Wall -Wextra -pedantic-errors -o ${fileDirname}/${fileBasenameNoExtension} ${file} && cat ${fileDirname}/inp.txt | ${fileDirname}/${fileBasenameNoExtension}",
+      "group": "build",
+      "type": "shell"
+    },
   ]
 }
