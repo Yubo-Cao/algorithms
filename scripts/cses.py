@@ -19,7 +19,7 @@ for suffix in ['in', 'out']:
     open(file_path, 'a').close()  # create an empty file
 
 # Create the main.py file
-main_file_path = os.path.join(folder_path, "main.py")
+main_file_path = os.path.join(folder_path, "main.cpp")
 open(main_file_path, 'a').close()  # create an empty file
 
 # Open all three files in a new instance of vscode

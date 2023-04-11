@@ -14,8 +14,14 @@
       "type": "shell"
     },
     {
-      "label": "Build C++",
-      "command": "g++ -std=c++17 -Wall -Wextra -pedantic-errors -o ${fileDirname}/${fileBasenameNoExtension} ${file} && cat ${fileDirname}/inp.txt | ${fileDirname}/${fileBasenameNoExtension}",
+      "label": "C++ Run",
+      "command": "g++ -std=c++17 -Wall -Wextra -pedantic-errors -o ${fileDirname}/${fileBasenameNoExtension} ${file} && cat ${fileDirname}/1.in | ${fileDirname}/${fileBasenameNoExtension}",
+      "group": "build",
+      "type": "shell"
+    },
+    {
+      "label": "C++ Check",
+      "command": "diff (Get-Content -Path ${fileDirname}/1.out) (g++ -std=c++17 -Wall -Wextra -pedantic-errors -o ${fileDirname}/${fileBasenameNoExtension} ${file} && cat ${fileDirname}/1.in | ${fileDirname}/${fileBasenameNoExtension})",
       "group": "build",
       "type": "shell"
     },
