@@ -1,0 +1,4 @@
+This is valid input.
+REJECTED
+REJECTED
+This looks suspicious $[jndi:sudo shutdown --now] but it's not a threat.

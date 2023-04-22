@@ -15,7 +15,7 @@
     },
     {
       "label": "C++ Run",
-      "command": "g++ -std=c++17 -Wall -Wextra -pedantic-errors -o ${fileDirname}/${fileBasenameNoExtension} ${file} && cat ${fileDirname}/1.in | ${fileDirname}/${fileBasenameNoExtension}",
+      "command": "g++ -std=c++17 -Wall -Wextra -pedantic-errors -opyth ${fileDirname}/${fileBasenameNoExtension} ${file} && cat ${fileDirname}/1.in | ${fileDirname}/${fileBasenameNoExtension}",
       "group": "build",
       "type": "shell"
     },

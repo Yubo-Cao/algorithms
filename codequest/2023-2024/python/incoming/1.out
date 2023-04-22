@@ -1,0 +1,36 @@
+Wave #1 --- Shot #1
+Elements in wave: 0 15 1 1 21 1 19 8 11 29 5 24 23 15 29 12 0 7 12 18 16 1 29 12 22 25 17 0
+Current size of wave: 28
+Total threat value of wave: 373
+Targeted range: Elements 11 to 25
+Eliminated elements: 24 23 15 29 12 0 7 12 18 16 1 29 12 22 25
+Number of elements destroyed: 15
+Total threat value eliminated: 245
+
+Wave #1 --- Shot #2
+Elements in wave: 0 15 1 1 21 1 19 8 11 29 5 17 0
+Current size of wave: 13
+Total threat value of wave: 128
+Targeted range: Elements 0 to 12
+Eliminated elements: 0 15 1 1 21 1 19 8 11 29 5 17 0
+Number of elements destroyed: 13
+Total threat value eliminated: 128
+
+Wave #2 --- Shot #1
+Elements in wave: 22 16 17 24 22 27 18 20 15 28 13 18 24 8 5 11 17 3 28 2 27 26 12 7 5 4 28 10 0 26
+Current size of wave: 30
+Total threat value of wave: 483
+Targeted range: Elements 0 to 14
+Eliminated elements: 22 16 17 24 22 27 18 20 15 28 13 18 24 8 5
+Number of elements destroyed: 15
+Total threat value eliminated: 277
+
+Wave #2 --- Shot #2
+Elements in wave: 11 17 3 28 2 27 26 12 7 5 4 28 10 0 26
+Current size of wave: 15
+Total threat value of wave: 206
+Targeted range: Elements 0 to 14
+Eliminated elements: 11 17 3 28 2 27 26 12 7 5 4 28 10 0 26
+Number of elements destroyed: 15
+Total threat value eliminated: 206
+
